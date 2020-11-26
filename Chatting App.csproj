@@ -37,14 +37,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database.cs" />
-    <Compile Include="Application.cs" />
-    <Compile Include="Conversation.cs" />
-    <Compile Include="Topic.cs" />
-    <Compile Include="Message.cs" />
-    <Compile Include="Chatter.cs" />
-    <Compile Include="Profile.cs" />
-    <Compile Include="Server.cs" />
+    <Compile Include="sources\Database.cs" />
+    <Compile Include="sources\Application.cs" />
+    <Compile Include="sources\Conversation.cs" />
+    <Compile Include="sources\Topic.cs" />
+    <Compile Include="sources\Message.cs" />
+    <Compile Include="sources\Chatter.cs" />
+    <Compile Include="sources\Profile.cs" />
+    <Compile Include="sources\Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

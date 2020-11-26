@@ -25,10 +25,19 @@ namespace Chatting_App
             Application.conn.WaitOne();
             accessingServ = true;
             Server.userTryingAccess = this;
-            Thread.Sleep(500); // we give time to the server to prepare the connection and cassign the account
-            Application.conn.Release(1);
+            // wait to be sur to be connected before unleashing the connection
+            Thread wait = new Thread(new ThreadStart(waitResponse));
+            wait.Start();
         }
 
-
+        public void waitResponse()
+        {
+            while (!connected)
+            {
+                Thread.Sleep(100); // no need to check every millisecond, we're not running out of time 
+            }
+            //if we're connected, then allow another user to connect 
+            Application.conn.Release(1);
+        }
     }
 }
