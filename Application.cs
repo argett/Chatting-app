@@ -11,7 +11,7 @@ namespace Chatting_App
          * 
          *  DATES           TEMPS
          *  
-         *  26/11/2020      14h - 
+         *  26/11/2020      14h - 18h30
          * 
          * 
          */
