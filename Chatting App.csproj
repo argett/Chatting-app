@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
@@ -44,6 +45,9 @@
     <Compile Include="Chatter.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="Server.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

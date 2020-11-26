@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Chatting_App
 {
     class Application
     {
+        public static Semaphore conn;
+
         /* HEURES PASSES :
          * 
          *  DATES           TEMPS
@@ -18,10 +17,14 @@ namespace Chatting_App
          */
         static void Main(string[] args)
         {
+            conn = new Semaphore(1, 1);
             Server serv = new Server(new Database());
-            serv.welcomeOnTheSite();
 
-            Console.ReadKey();
+            Thread servAwake = new Thread(new ThreadStart(serv.welcomeOnTheSite));
+            servAwake.Start();
+
+            Chatter lilian = new Chatter("lilian");
+            lilian.pingServ();
         }
     }
 }

@@ -18,6 +18,8 @@ namespace Chatting_App
         {
             login = name;
             password = pswd;
+            friends = null;
+            conversations = null;
         }
 
         public string getPassword()

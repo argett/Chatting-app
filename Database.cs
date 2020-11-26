@@ -19,6 +19,7 @@ namespace Chatting_App
 
         public bool connectProfile(string id, string psw)
         {
+            // check if the profile exists
             if(allProfiles != null)
             {
                 foreach (Profile pro in allProfiles)
@@ -37,6 +38,7 @@ namespace Chatting_App
         public void addNewProfile(string id, string psw)
         {
             allProfiles.Add(new Profile(id, psw));
+            Console.WriteLine("Your profile '" + id + "' has been created correctly. Password = '" + psw + "'\n");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,37 +9,46 @@ namespace Chatting_App
 {
     class Server
     {
+        public static Chatter userTryingAccess;
+        public static Thread conn;
+
         private Database dbs;
 
         public Server(Database db)
         {
             dbs = db;
+            conn = null;
+            userTryingAccess = null;
         }
 
         // the first thing the user see on the page
-        public bool welcomeOnTheSite()
+        public void welcomeOnTheSite()
         {
-            Console.WriteLine("Hello, do you want to create a New account or Connect to an existing one ? N/C");
-            ConsoleKeyInfo choice = Console.ReadKey();
-            Console.WriteLine("");
+            while (true)
+            {
+                if (userTryingAccess != null)
+                {
+                    Console.Write("Hello, do you want to create a New account or Connect to an existing one ? N/C : ");
+                    string choice = Console.ReadLine();
+                    if (choice.ToLower() == "n")  // create a new user
+                    {
+                        createUser();
+                        tryConnection();
 
-            if (choice.Key.ToString().ToLower() == "n")  // create a new user
-            {
-                createUser();
-                Console.WriteLine("Thank you for registering, now you can attempt to connect");
-                if (!tryConnection())
-                    return false;
+                    }
+                    else if (choice.ToLower() == "c") // establish the connection
+                    {
+                        tryConnection();
+                    }
+                    else
+                    {
+                        // forfate the connection
+                        userTryingAccess.connected = false;
+                        userTryingAccess.accessingServ = false;
+                        userTryingAccess = null;
+                    }
+                }
             }
-            else if (choice.Key.ToString().ToLower() == "c") // establish the connection
-            {
-                tryConnection();
-            }
-            else
-            {
-                return false;
-            }
-                
-            return true;
         }
 
         private void createUser()
@@ -49,10 +59,28 @@ namespace Chatting_App
             Console.WriteLine("Pease choose your new password : ");
             psw = Console.ReadLine();
             dbs.addNewProfile(id, psw);
+            Console.WriteLine("Thank you for registering, now you can attempt to connect");
         }
 
-        // the user enter its ID & password
-        private bool tryConnection()
+
+        private void tryConnection()
+        {
+            if (connecting())
+            {
+                userTryingAccess.connected = true;
+                userTryingAccess.accessingServ = false;
+                userTryingAccess = null;
+            }
+            else
+            {
+                userTryingAccess.connected = false;
+                userTryingAccess.accessingServ = false;
+                userTryingAccess = null;
+            }
+        }
+
+        // the user enter its ID & password, return false if the user wants to quit
+        private bool connecting()
         {
             ConsoleKeyInfo choice;
             string id, psw;
@@ -88,6 +116,7 @@ namespace Chatting_App
         {
             if (dbs.connectProfile(id, pswrd))
             {
+                userTryingAccess.account = new Profile(id, pswrd);
                 Console.WriteLine("The connection has been established, " + id);
                 return true;
             }
