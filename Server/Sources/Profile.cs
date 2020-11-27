@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chatting_App
+namespace Server
 {
-    class Profile
+    public class Profile
     {
         public string login;
         private string password;
@@ -36,12 +36,12 @@ namespace Chatting_App
         {
             return friends;
         }
-
+        /*
         public void addFriend(string name, Conversation conv)
         {
             conversations.Add(name, conv);
         }
-
+        
         public Conversation getConversationWithName(string title)
         {
             Conversation value;
@@ -54,5 +54,6 @@ namespace Chatting_App
                 return null; ;
             }
         }
+        */
     }
 }

@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{785320D0-992C-4C44-AA4D-44F8F1FC77F1}</ProjectGuid>
+    <ProjectGuid>{E53793B1-0F5A-4331-A91A-1B9ED6EDAAA3}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Chatting_App</RootNamespace>
-    <AssemblyName>Chatting App</AssemblyName>
+    <RootNamespace>Client</RootNamespace>
+    <AssemblyName>Client</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -34,17 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="sources\Database.cs" />
-    <Compile Include="sources\Application.cs" />
-    <Compile Include="sources\Conversation.cs" />
-    <Compile Include="sources\Topic.cs" />
-    <Compile Include="sources\Message.cs" />
-    <Compile Include="sources\Chatter.cs" />
-    <Compile Include="sources\Profile.cs" />
-    <Compile Include="sources\Server.cs" />
+    <Compile Include="Sources\Application.cs" />
+    <Compile Include="Sources\Chatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

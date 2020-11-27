@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using System.Windows.Input;
+//using Server;
 
-namespace Chatting_App
+namespace Client
 {
     class Application
     {
@@ -13,18 +13,12 @@ namespace Chatting_App
          *  DATES           TEMPS
          *  
          *  26/11/2020      14h - 18h30     23h - 23h30
-         * 
+         *  27/11/2020      11h - 
          * 
          */
         static void Main(string[] args)
         {
-            conn = new Semaphore(1, 1);
-            Server serv = new Server(new Database());
-
-            Thread servAwake = new Thread(new ThreadStart(serv.welcomeOnTheSite));
-            servAwake.Start();
-
-            Chatter lilian = new Chatter("lilian");
+            Chatter lilian = new Chatter("lilian","127.0.0.1", 8976);
             lilian.pingServ();
         }
     }

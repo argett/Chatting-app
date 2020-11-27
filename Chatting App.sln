@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatting App", "Chatting App.csproj", "{785320D0-992C-4C44-AA4D-44F8F1FC77F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{B3DD283D-13C4-454A-B1CE-9D3799DCC75B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{E53793B1-0F5A-4331-A91A-1B9ED6EDAAA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{785320D0-992C-4C44-AA4D-44F8F1FC77F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{785320D0-992C-4C44-AA4D-44F8F1FC77F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{785320D0-992C-4C44-AA4D-44F8F1FC77F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{785320D0-992C-4C44-AA4D-44F8F1FC77F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3DD283D-13C4-454A-B1CE-9D3799DCC75B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3DD283D-13C4-454A-B1CE-9D3799DCC75B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3DD283D-13C4-454A-B1CE-9D3799DCC75B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3DD283D-13C4-454A-B1CE-9D3799DCC75B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E53793B1-0F5A-4331-A91A-1B9ED6EDAAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E53793B1-0F5A-4331-A91A-1B9ED6EDAAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E53793B1-0F5A-4331-A91A-1B9ED6EDAAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E53793B1-0F5A-4331-A91A-1B9ED6EDAAA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
