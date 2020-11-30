@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Threading;
+using Network;
 
 namespace Client
 {
@@ -27,11 +28,10 @@ namespace Client
             comm = new TcpClient(hostname, port);
             while (true)
             {
-                //Answer msg = (Answer)Network.Net.rcvMsg(comm.GetStream());
-                Thread.Sleep(1000);
-                Console.WriteLine("WTF");
+                Answer msg = (Answer)Network.Net.rcvMsg(comm.GetStream());
+                Console.WriteLine(msg);
             }
-            //Server.Server.welcomeOnTheSite();
+
         }
 
 

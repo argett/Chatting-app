@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
+using Network;
 
 namespace Server
 {
@@ -36,7 +37,7 @@ namespace Server
             while (true)
             {
                 comm = input.AcceptTcpClient();
-                Console.WriteLine("USER on the home page");
+                Console.WriteLine("User on the home page");
 
                 Thread login = new Thread(new ThreadStart(welcomeOnTheSite));
                 login.Start();
@@ -47,10 +48,7 @@ namespace Server
         public static void welcomeOnTheSite()
         {
             Console.WriteLine("the user is entering its ID & psw");
-            //Network.Net.sendMsg(comm.GetStream(), new Network.Answer("Hello, do you want to create a New account or Connect to an existing one ? N/C : ", false));
-            Network.Answer ans= new Network.Answer("Hello, do you want to create a New account or Connect to an existing one ? N/C : ", false);
-
-            Console.WriteLine(ans.ToString());
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("Hello, do you want to create a New account or Connect to an existing one ? N/C : ", false));
             /*
 
             Console.WriteLine("");

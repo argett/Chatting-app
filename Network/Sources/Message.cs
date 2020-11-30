@@ -92,14 +92,14 @@ namespace Network
             {
                 foreach (string t in content)
                 {
-                    s.Insert(s.Length - 1, t + " ");
+                    s += t + " ";
                 }
             }
 
             if(error)
-                s.Insert(s.Length - 1, "problem");
+                s += "problem";
             else
-                s.Insert(s.Length - 1, "nominal");
+                s += "nominal";
 
             return s;
         }
