@@ -13,11 +13,13 @@ namespace Server
     {
         private int port;
         private Database dbs;
+        private static TcpClient comm;
 
         Server(Database db, int n)
         {
             dbs = db;
             port = n;
+            comm = null;
         }
 
         static void Main(string[] args)
@@ -33,8 +35,8 @@ namespace Server
             input.Start();
             while (true)
             {
-                TcpClient comm = input.AcceptTcpClient();
-                Console.WriteLine("user on the home page");
+                comm = input.AcceptTcpClient();
+                Console.WriteLine("USER on the home page");
 
                 Thread login = new Thread(new ThreadStart(welcomeOnTheSite));
                 login.Start();
@@ -44,7 +46,14 @@ namespace Server
         // the first thing the user see on the page
         public static void welcomeOnTheSite()
         {
-            Console.WriteLine("Hello, do you want to create a New account or Connect to an existing one ? N/C : ");
+            Console.WriteLine("the user is entering its ID & psw");
+            //Network.Net.sendMsg(comm.GetStream(), new Network.Answer("Hello, do you want to create a New account or Connect to an existing one ? N/C : ", false));
+            Network.Answer ans= new Network.Answer("Hello, do you want to create a New account or Connect to an existing one ? N/C : ", false);
+
+            Console.WriteLine(ans.ToString());
+            /*
+
+            Console.WriteLine("");
             string choice = Console.ReadLine();
             if (choice.ToLower() == "n")  // create a new user
             {
@@ -56,6 +65,7 @@ namespace Server
             {
                 connecting();
             }
+            */
         }
 
         private static void createUser()

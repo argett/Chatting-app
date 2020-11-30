@@ -55,6 +55,13 @@ namespace Network
         private List<string> content; // the liste of message, topics
         private bool error;
 
+        public Answer(string tit, bool err)
+        {
+            title = tit;
+            error = err;
+            content = null;
+        }
+
         public Answer(string tit, List<string> cont, bool err)
         {
             title = tit;
@@ -79,7 +86,22 @@ namespace Network
 
         public override string ToString()
         {
-            return val + " ";
+            string s = title + " ";
+
+            if(content != null)
+            {
+                foreach (string t in content)
+                {
+                    s.Insert(s.Length - 1, t + " ");
+                }
+            }
+
+            if(error)
+                s.Insert(s.Length - 1, "problem");
+            else
+                s.Insert(s.Length - 1, "nominal");
+
+            return s;
         }
 
     }

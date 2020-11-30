@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Threading;
-//using Server;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Client
 {
     class Chatter
-    { 
+    {
         public string name;
         //public Profile account;
 
+        private TcpClient comm;
         private string hostname;
         private int port;
 
@@ -18,18 +18,22 @@ namespace Client
             name = x;
             hostname = h;
             port = p;
-            //account = null;
+            comm = null;
         }
 
         // the human start pinging the server to say "i want to connect"
         public void pingServ()
         {
-            TcpClient comm = new TcpClient(hostname, port);
-            Console.WriteLine("i am on the home page");
-
+            comm = new TcpClient(hostname, port);
+            while (true)
+            {
+                //Answer msg = (Answer)Network.Net.rcvMsg(comm.GetStream());
+                Thread.Sleep(1000);
+                Console.WriteLine("WTF");
+            }
             //Server.Server.welcomeOnTheSite();
         }
 
-        
+
     }
 }
