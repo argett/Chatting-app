@@ -14,9 +14,9 @@ namespace Network
     [Serializable]
     public class Request : Message // all messages sent by the client and received bu the server
     {
-        private string purpose; // connection, topics, public message on topic, private message, conversation
-        private string target;  // user or topic name
-        private string message; // if there is a message
+        private string purpose;    // connection, topics, public message on topic, private message, conversation
+        private string target;     // user or topic name
+        private string message;    // if there is a message
 
 
         public Request(string p, string m)
@@ -57,11 +57,11 @@ namespace Network
     }
 
     [Serializable]
-    public class Answer : Message // all messages sent by the server and received by the client
+    public class Answer : Message     // all messages sent by the server and received by the client
     {
-        private string title; // name of the conversation, topic
-        private List<string> content; // the liste of message, topics
-        private string message; // the liste of message, topics
+        private string title;         // name of the conversation, topic
+        private List<string> content; // the list of message, topics
+        private string message;       // if the message is a simple string (in general a message to print in user console)
         private bool error;
 
         public Answer(string tit, bool err)
@@ -110,7 +110,10 @@ namespace Network
 
         public override string ToString()
         {
-            string s = title + " ";
+            string s = "";
+
+            if (title != "checkpoint message")
+                s = title + " ";
 
             if(content != null)
             {
@@ -119,6 +122,9 @@ namespace Network
                     s += t + " ";
                 }
             }
+
+            if (message != null)
+                s += message;
 
             if(error)
                 s += " problem in the request ! ";
