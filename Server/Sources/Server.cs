@@ -13,7 +13,7 @@ namespace Server
     public class Server
     {
         private int port;
-        private Database dbs;
+        private static Database dbs;
         private static TcpClient comm;
 
         Server(Database db, int n)
@@ -47,39 +47,62 @@ namespace Server
         // the first thing the user see on the page
         public static void welcomeOnTheSite()
         {
-            Console.WriteLine("the user is entering its ID & psw");
+            Console.WriteLine("the user is choosing between create or use an existing account");
             Network.Net.sendMsg(comm.GetStream(), new Network.Answer("Hello, do you want to create a New account or Connect to an existing one ? N/C : ", false));
-            /*
+            Request r = (Request)Network.Net.rcvMsg(comm.GetStream());
+            checkConnChoice(r.getMessage());
+        }
 
-            Console.WriteLine("");
-            string choice = Console.ReadLine();
-            if (choice.ToLower() == "n")  // create a new user
+        private static bool checkConnChoice(string choice)
+        {
+            if (choice.ToLower() == "n")
             {
-                //createUser();
-                //connecting();
-
-            }
-            else if (choice.ToLower() == "c") // establish the connection
-            {
+                Console.WriteLine("the user is creating a new user");
+                createUser();
                 connecting();
+                return true;
             }
-            */
+            else if (choice.ToLower() == "c")
+            {
+                Console.WriteLine("the user is connecting");
+                connecting();
+                return true;
+            }
+            else return false;
         }
 
         private static void createUser()
         {
-            string id, psw;
-            Console.WriteLine("Please choose your new ID : ");
-            id = Console.ReadLine();
-            Console.WriteLine("Pease choose your new password : ");
-            psw = Console.ReadLine();
-            //dbs.addNewProfile(id, psw);
-            Console.WriteLine("Thank you for registering, now you can attempt to connect");
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create user", "Please choose your new ID and your PASSWORD (no space): ", false));
+            Request r = (Request)Network.Net.rcvMsg(comm.GetStream());
+
+            string id = "", psw = "", turn = "id";
+            foreach (char s in r.getMessage())
+            {
+                if(s != ' ')
+                {
+                    if (turn == "id")
+                        id += s;
+                    else if (turn == "psw")
+                        psw += s;
+                    else
+                        Console.WriteLine("ERROR 404 : failure parsing id/psw");
+                }
+                else
+                {
+                    turn = "psw";
+                }
+            }
+            dbs.addNewProfile(id, psw);
+
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("message of validation", "Your account has been correctly created. please log in now", false));
         }
 
         // the user enter its ID & password, return false if the user wants to quit
-        private static bool connecting()
+        private static void connecting()
         {
+            Console.WriteLine("createUser");
+            /*
             ConsoleKeyInfo choice;
             string id, psw;
             bool _continue = false;
@@ -107,6 +130,7 @@ namespace Server
                 }
             } while (_continue);
             return false;
+            */
         }
 
         // if the user wants to sign in
@@ -121,6 +145,19 @@ namespace Server
             else
                 Console.WriteLine("The ID or the password is incorrect, please retry");
                 return false;
+        }
+
+        private static void analyseRequest(Request r)
+        {
+            switch(r.getPurpose())
+            {
+                case "connection":
+                    
+                    break;
+                default:
+                    Console.WriteLine("error of request purpose");
+                    break;
+            }
         }
     }
 }

@@ -12,13 +12,21 @@ namespace Network
     }
 
     [Serializable]
-    public class Requests : Message
+    public class Request : Message // all messages sent by the client and received bu the server
     {
         private string purpose; // connection, topics, public message on topic, private message, conversation
         private string target;  // user or topic name
         private string message; // if there is a message
 
-        public Requests(string p, string t, string m)
+
+        public Request(string p, string m)
+        {
+            purpose = p;
+            message = m;
+            target = null;
+        }
+
+        public Request(string p, string t, string m)
         {
             purpose = p;
             target = t;
@@ -49,16 +57,26 @@ namespace Network
     }
 
     [Serializable]
-    public class Answer : Message
+    public class Answer : Message // all messages sent by the server and received by the client
     {
         private string title; // name of the conversation, topic
         private List<string> content; // the liste of message, topics
+        private string message; // the liste of message, topics
         private bool error;
 
         public Answer(string tit, bool err)
         {
             title = tit;
             error = err;
+            content = null;
+            message = null;
+        }
+
+        public Answer(string tit, string msg, bool err)
+        {
+            title = tit;
+            error = err;
+            message = msg;
             content = null;
         }
 
@@ -67,6 +85,7 @@ namespace Network
             title = tit;
             content = cont;
             error = err;
+            message = null;
         }
 
         public string getTitle()
@@ -77,6 +96,11 @@ namespace Network
         public List<string> getContent()
         {
             return content;
+        }
+
+        public string getMessage()
+        {
+            return message;
         }
 
         public bool getError()
@@ -97,9 +121,7 @@ namespace Network
             }
 
             if(error)
-                s += "problem";
-            else
-                s += "nominal";
+                s += " problem in the request ! ";
 
             return s;
         }

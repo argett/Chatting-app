@@ -28,8 +28,27 @@ namespace Client
             comm = new TcpClient(hostname, port);
             while (true)
             {
-                Answer msg = (Answer)Network.Net.rcvMsg(comm.GetStream());
+                Answer msg = (Answer)Network.Net.rcvMsg(comm.GetStream()); // create new user or connect
                 Console.WriteLine(msg);
+                string choice = Console.ReadLine(); 
+                Network.Net.sendMsg(comm.GetStream(), new Network.Request("connection", "choice", choice));
+                
+                while(msg.getMessage() != "connected") // steps before to validate the connection
+                {
+                    msg = (Answer)Network.Net.rcvMsg(comm.GetStream());
+                    Console.WriteLine(msg.getMessage());
+                    switch (msg.getTitle())
+                    {
+                        case "create user":
+                            string id = Console.ReadLine();
+                            string psw = Console.ReadLine();
+                            string res = id + " " + psw;
+                            Network.Net.sendMsg(comm.GetStream(), new Network.Request("connection", "add profile - id",res));
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
 
         }
