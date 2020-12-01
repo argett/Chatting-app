@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chatting_App
+namespace Server
 {
     class Database
     {
@@ -28,17 +28,23 @@ namespace Chatting_App
                         return true;
                 }
             }
-            else
-            {
-                Console.WriteLine("The database is empty, there is no user");
-            }
+
             return false;
         }
 
         public void addNewProfile(string id, string psw)
         {
             allProfiles.Add(new Profile(id, psw));
-            Console.WriteLine("Your profile '" + id + "' has been created correctly. Password = '" + psw + "'\n");
+            Console.WriteLine("The profile '" + id + "' has been created correctly. Password = '" + psw + "'");
+        }
+        public void addTopic(string title)
+        {
+            allTopics.Add(new Topic(title));
+        }
+
+        public List<Topic> getTopics()
+        {
+            return allTopics;
         }
     }
 }
