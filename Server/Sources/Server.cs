@@ -26,6 +26,11 @@ namespace Server
         static void Main(string[] args)
         {
             Server serv = new Server(new Database(),8976);
+            dbs.addTopic("bug");
+            dbs.addTopic("problemes");
+            dbs.addTopic("liste1");
+            dbs.addTopic("/r");
+            dbs.addNewProfile("li", "fg");
             serv.start();
 
         }
@@ -67,10 +72,10 @@ namespace Server
             if (checkConnChoice(r.getMessage())) // connect the user at the database
             {
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("connection allowed", false));
+                homePage();
             }
             else
             {
-
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("connection denied", false));
                 Console.WriteLine("A user is leaving the website");
             }
@@ -135,7 +140,7 @@ namespace Server
 
         /****************
          * 
-         * the user enter its ID & password, retuen true when connetced, return false if the user wants to quit
+         * the user enter its ID & password, return true when connetced, return false if the user wants to quit
          * 
          ****************/
         private static bool connecting()
@@ -147,9 +152,9 @@ namespace Server
                 Request r = (Request)Network.Net.rcvMsg(comm.GetStream());
 
                 string id = "", psw = "", turn = "id";
-                foreach (char s in r.getMessage())
+                foreach (char s in r.getMessage())//  separate the psw & id from the string
                 {
-                    if (s != ' ') //  separate the psw & id from the string
+                    if (s != ' ') 
                     {
                         if (turn == "id")
                             id += s;
@@ -166,7 +171,7 @@ namespace Server
 
                 if (id == "exit")
                 {
-                    Network.Net.sendMsg(comm.GetStream(), new Network.Answer("end connection", "You have chosen to exit the webpage", false));
+                    endProgram();
                     return false;
                 }
 
@@ -197,7 +202,80 @@ namespace Server
         }
 
 
-
         // ---------------------------------     HOME WEBSITE PART     --------------------------------- 
+    
+        private static void homePage()
+        {
+            bool _continue = true;
+            while (_continue)
+            {
+                Console.WriteLine("The user is in the homepage");
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page choice", "\nWhat do you want to do ? \n1 : Send a private message \n2 : Connect to a topic \n3 : Create a topic \n4 : exit \nEnter 1/2/3/4 :", false));
+                Request choice = (Request)Network.Net.rcvMsg(comm.GetStream());
+                switch (choice.getMessage())
+                {
+                    case "1":
+                        Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", false));
+                        privateMsg();
+                        break;
+                    case "2":
+                        Network.Net.sendMsg(comm.GetStream(), new Network.Answer("goto topics", false));
+                        connTopic();
+                        break;
+                    case "3":
+                        Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", false));
+                        createTopic();
+                        break;
+                    case "4":
+                        Network.Net.sendMsg(comm.GetStream(), new Network.Answer("end connection", false));
+                        endProgram();
+                        _continue = false;
+                        break;
+                }
+            }
+        }
+
+        private static void createTopic()
+        {
+            ;
+        }
+
+        private static void endProgram()
+        {
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("end connection", "You have chosen to exit the webpage", false));
+        }
+
+        // ---------------------------------     PRIVATE MESSAGE PART     --------------------------------- 
+
+
+        private static void privateMsg()
+        {
+            ;
+        }
+
+        // ---------------------------------     CONSULT TOPICS PART     --------------------------------- 
+
+
+        private static void connTopic()
+        {
+            listTopics();
+            // recevoir le choix du topics
+        }
+
+        private static void listTopics()
+        {
+            string topics = "Choose a topic among these topics (enter the number):\n";
+            int i = 0;
+            List<Topic> list = dbs.getTopics();
+            foreach (Topic t in list)
+            {
+                topics += i.ToString();
+                topics += " : ";
+                topics += t.getTitle();
+                topics += "\n";
+                i++;
+            }
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("list of topics", topics, false));
+        }
     }
 }

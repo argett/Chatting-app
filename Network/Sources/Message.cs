@@ -111,9 +111,7 @@ namespace Network
         public override string ToString()
         {
             string s = "";
-
-            if (title != "checkpoint message")
-                s = title + " ";
+            // no need to print the title, it serves only to the program
 
             if(content != null)
             {

@@ -8,7 +8,17 @@ namespace Server
 {
     class Topic
     {
-        public string title;
+        private string title;
+
+        public Topic(string t)
+        {
+            title = t;
+        }
+
+        public string getTitle()
+        {
+            return title;
+        }
 
     }
 }

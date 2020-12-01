@@ -37,5 +37,14 @@ namespace Server
             allProfiles.Add(new Profile(id, psw));
             Console.WriteLine("The profile '" + id + "' has been created correctly. Password = '" + psw + "'");
         }
+        public void addTopic(string title)
+        {
+            allTopics.Add(new Topic(title));
+        }
+
+        public List<Topic> getTopics()
+        {
+            return allTopics;
+        }
     }
 }
