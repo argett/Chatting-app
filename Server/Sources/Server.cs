@@ -251,29 +251,28 @@ namespace Server
                 switch (req.getMessage())
                 {
                     case "1":
+                        Console.WriteLine("The user goes to the private message webpage");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", false));
                         privateMsg();
                         break;
                     case "2":
+                        Console.WriteLine("The user goes to the topics webpage");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("goto topics", false));
                         connTopic();
                         break;
                     case "3":
+                        Console.WriteLine("The user goes to the create topic webpage");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", false));
                         createTopic();
                         break;
                     case "4":
+                        Console.WriteLine("The user quit the programm");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("end connection", false));
                         endProgram();
                         _continue = false;
                         break;
                 }
             }
-        }
-
-        private static void createTopic()
-        {
-            ;
         }
 
         // ---------------------------------     PRIVATE MESSAGE PART     --------------------------------- 
@@ -319,7 +318,7 @@ namespace Server
             while (_continue)
             {
                 string printTopic = "\t/////////////////////////////////////////////////\n";
-                printTopic += "\t\t\t     " + dbs.getTopic(i).getTitle().ToUpper() + "\n";
+                printTopic += "\t\t\t  " + dbs.getTopic(i).getTitle().ToUpper() + "\n";
                 printTopic += "\t/////////////////////////////////////////////////\n\n\n";
                 foreach (Topic.Comment c in dbs.getTopic(i).getComments())
                 {
@@ -342,6 +341,17 @@ namespace Server
                 else
                     dbs.getTopic(i).addComment(req.getPurpose(), req.getMessage());
             }
+        }
+
+        // ---------------------------------     CREATE TOPICS PART     --------------------------------- 
+
+        private void createTopic()
+        {
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", "To create a topic, please enter its name : \n", false));
+            waitMessage();
+            int topicN = dbs.addNewTopic(req.getMessage());
+            Console.WriteLine("New topic +'" + req.getMessage() + "' created");
+            topicPage(topicN);
         }
 
 

@@ -102,6 +102,7 @@ namespace Client
                         topics();
                         break;
                     case "create topic":
+                        createTopic();
                         break;
                     case "end connection":
                         exit();
@@ -129,7 +130,6 @@ namespace Client
 
             Network.Net.sendMsg(comm.GetStream(), new Network.Request("topics", topic.ToString()));
             topicPage();
-            Console.WriteLine("on quitte le topic");
         }
 
         private int getNbTopics()
@@ -154,7 +154,17 @@ namespace Client
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request(this.name, s));
                 waitMessage(true);
             } while (msg.getTitle() != "home page redirection");
-            Console.WriteLine("on quitte le topic page");
+        }
+
+
+        // ---------------------------------     CREATE TOPICS PART     --------------------------------- 
+        
+        private void createTopic()
+        {
+            waitMessage(true); // instructions creating a topic
+            string title = Console.ReadLine();
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("create topic", title));
+            topicPage(); // after creating the topic, we go to its page
         }
 
 
