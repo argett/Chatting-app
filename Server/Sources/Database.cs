@@ -37,7 +37,8 @@ namespace Server
             allProfiles.Add(new Profile(id, psw));
             Console.WriteLine("The profile '" + id + "' has been created correctly. Password = '" + psw + "'");
         }
-        public void addTopic(string title)
+
+        public void addNewTopic(string title)
         {
             allTopics.Add(new Topic(title));
         }
@@ -45,6 +46,11 @@ namespace Server
         public List<Topic> getTopics()
         {
             return allTopics;
+        }
+
+        public Topic getTopic(int i)
+        {
+            return allTopics[i];
         }
     }
 }
