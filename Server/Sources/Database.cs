@@ -38,6 +38,16 @@ namespace Server
             Console.WriteLine("The profile '" + id + "' has been created correctly. Password = '" + psw + "'");
         }
 
+        public List<Profile> getProfiles()
+        {
+            return allProfiles;
+        }
+
+        public Profile getProfileN(int n)
+        {
+            return allProfiles[n];
+        }
+
         public int addNewTopic(string title) // return the place of the new topic
         {
             allTopics.Add(new Topic(title));

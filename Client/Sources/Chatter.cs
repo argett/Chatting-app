@@ -8,7 +8,6 @@ namespace Client
     class Chatter
     {
         private string name;
-        //public Profile account;
 
         private TcpClient comm;
         private string hostname;
@@ -36,7 +35,7 @@ namespace Client
          ****************/
         public void pingServ()
         {
-            string id, psw, res;
+            string id ="", psw, res;
             comm = new TcpClient(hostname, port);
 
             waitMessage(true);
@@ -56,7 +55,7 @@ namespace Client
                 }
             }
 
-            resConnection();
+            resConnection(id);
         }
 
         /****************
@@ -64,11 +63,14 @@ namespace Client
          * call others function depending on the result of the connection
          * 
          ****************/
-        private void resConnection()
+        private void resConnection(string id)
         {
             waitMessage(false);
             if (msg.getTitle() == "connection allowed")
+            {
+                this.name = id; // now the chatter IS the pseudo
                 homeServer();
+            }
             else if (msg.getTitle() == "connection denied")
             {
                 Console.WriteLine("Exiting the website...");
@@ -92,11 +94,12 @@ namespace Client
                 do{
                     n = Int32.Parse(Console.ReadLine());
                 } while (n > 4 && n < 1);
-                Network.Net.sendMsg(comm.GetStream(), new Network.Request("home page redirection", n.ToString()));
+                Network.Net.sendMsg(comm.GetStream(), new Network.Request("home page redirection", n));
                 waitMessage(false);  // get the redirection
                 switch (msg.getTitle())
                 {
                     case "private message":
+                        privateMessageHome();
                         break;
                     case "goto topics":
                         topics();
@@ -108,12 +111,29 @@ namespace Client
                         exit();
                         break;
                 }
-                Console.WriteLine("fin du switch, wait message");
             }
         }
 
 
         // ---------------------------------     PRIVATE MESSAGE PART     --------------------------------- 
+
+        public void privateMessageHome()
+        {
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", this.name)); //we give the name of the profile in order the databse knows which conversation to give
+            waitMessage(true);
+            if(msg.getNumber() != -1)
+            {
+                int convNB;
+                do
+                {
+                    convNB = Int32.Parse(Console.ReadLine());
+                } while (convNB > msg.getNumber() - 1 || convNB < 1);
+                Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", this.name, convNB)); //we give the name of the profile in order the databse knows which conversation to give
+                discussionPage();
+            }
+            else
+                waitMessage(true);
+        }
 
 
         // ---------------------------------     CONSULT TOPICS PART     --------------------------------- 
@@ -121,31 +141,17 @@ namespace Client
         private void topics()
         {
             waitMessage(true); // get the list of topics
-            int nb_topics = getNbTopics();
             int topic;
             do
             {
                 topic = Int32.Parse(Console.ReadLine());
-            } while (topic > nb_topics-1 || topic < 1);
+            } while (topic > msg.getNumber()-1 || topic < 1);
 
-            Network.Net.sendMsg(comm.GetStream(), new Network.Request("topics", topic.ToString()));
-            topicPage();
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("topics", topic));
+            discussionPage();
         }
 
-        private int getNbTopics()
-        {
-            string nb_topics_s = "";
-            foreach (char n in msg.getTitle())  // select the nb of topics in the title
-            {
-                if (n != ' ')
-                    nb_topics_s += n;
-                else
-                    break;
-            }
-            return Int32.Parse(nb_topics_s);
-        }
-
-        private void topicPage()
+        private void discussionPage()
         {
             waitMessage(true); // print the comments on the topics
             do
@@ -157,14 +163,19 @@ namespace Client
         }
 
 
+
         // ---------------------------------     CREATE TOPICS PART     --------------------------------- 
         
         private void createTopic()
         {
             waitMessage(true); // instructions creating a topic
             string title = Console.ReadLine();
-            Network.Net.sendMsg(comm.GetStream(), new Network.Request("create topic", title));
-            topicPage(); // after creating the topic, we go to its page
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request(name + " create topic", title));
+            waitMessage(false);
+            if (!msg.getError())
+                discussionPage(); // after creating the topic, we go to its page
+            else
+                Console.WriteLine(msg.getContent());
         }
 
 

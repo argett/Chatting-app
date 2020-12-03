@@ -6,52 +6,37 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    public class Topic
+    public class Topic : Agora
     {
-        public class Comment
-        {
-            private string[] comment;
-
-            public Comment(string user, string message){
-                comment = new string[2];
-                comment[0] = user;
-                comment[1] = message;
-            }
-
-            public string getUser()
-            {
-                return comment[0];
-            }
-            public string getMessage()
-            {
-                return comment[1];
-            }
-        }
-
         private string title;
-        private List<Comment> comments;
-        
+        private List<Profile> members;
+
+        public string Title
+        {
+            get => title;
+            set => title = value;
+        }
 
         public Topic(string t)
         {
-            title = t;
-            comments = new List<Comment>();
+            this.Title = t;
+            this.Comments = new List<Comment>();
+            members = new List<Profile>();
         }
 
-        public string getTitle()
+        public bool addMember(Profile p)
         {
-            return title;
+            if(p != null)
+            {
+                members.Add(p);
+                return true;
+            }
+            return false;
         }
 
-        public List<Comment> getComments()
+        public List<Profile> getMembers()
         {
-            return comments;
-        }
-
-        public void addComment(string u, string m)
-        {
-            Comment c = new Comment(u, m);
-            comments.Add(c);
+            return members;
         }
 
     }

@@ -12,14 +12,14 @@ namespace Server
         private string password;
 
         private List<Profile> friends;
-        private Dictionary<string, Conversation> conversations;
+        private Dictionary<string, Conversation> conversations; // the name of the conversation with the pointer to it
 
         public Profile(string name, string pswd)
         {
             login = name;
             password = pswd;
-            friends = null;
-            conversations = null;
+            friends = new List<Profile>();
+            conversations = new Dictionary<string, Conversation>();
         }
 
         public string getPassword()
@@ -36,10 +36,10 @@ namespace Server
         {
             return friends;
         }
-        /*
-        public void addFriend(string name, Conversation conv)
+
+        public void addConversation(string name, Conversation c)
         {
-            conversations.Add(name, conv);
+            conversations.Add(name, c);
         }
         
         public Conversation getConversationWithName(string title)
@@ -51,9 +51,18 @@ namespace Server
             }
             else
             {
-                return null; ;
+                return null;
             }
         }
-        */
+
+        public Dictionary<string, Conversation> getConversations()
+        {
+            return conversations;
+        }
+
+        public Dictionary<string, Conversation> getConversationsN(int i)
+        {
+            return conversations;
+        }
     }
 }

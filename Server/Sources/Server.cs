@@ -50,8 +50,21 @@ namespace Server
             dbs.getTopic(3).addComment("non", "blog");
             dbs.getTopic(3).addComment("hey", "announcement");
             dbs.getTopic(3).addComment("yo", "18-25");
+
             dbs.addNewProfile("li", "fg");
-            
+            dbs.addNewProfile("oui", "non");
+            dbs.getProfileN(0).addFriend(dbs.getProfileN(1));
+            dbs.getProfileN(1).addFriend(dbs.getProfileN(0));
+            Conversation conv = new Conversation(dbs.getProfileN(0), dbs.getProfileN(1));
+            dbs.getProfileN(0).addConversation("un nom super cool", conv);
+            dbs.getProfileN(1).addConversation("un nom super cool", conv);
+            dbs.addNewProfile("a", "b");
+            dbs.getProfileN(0).addFriend(dbs.getProfileN(2));
+            dbs.getProfileN(2).addFriend(dbs.getProfileN(0));
+            conv = new Conversation(dbs.getProfileN(0), dbs.getProfileN(2));
+            dbs.getProfileN(0).addConversation("un autre nom super cool", conv);
+            dbs.getProfileN(2).addConversation("un autre nom super cool", conv);
+
 
 
             serv.start();
@@ -248,24 +261,24 @@ namespace Server
                 Console.WriteLine("The user is in the homepage");
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page choice", "What do you want to do ? \n1 : Send a private message \n2 : Connect to a topic \n3 : Create a topic \n4 : exit \nEnter 1/2/3/4 :", false));
                 waitMessage();
-                switch (req.getMessage())
+                switch (req.getNumber())
                 {
-                    case "1":
+                    case 1:
                         Console.WriteLine("The user goes to the private message webpage");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", false));
                         privateMsg();
                         break;
-                    case "2":
+                    case 2:
                         Console.WriteLine("The user goes to the topics webpage");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("goto topics", false));
                         connTopic();
                         break;
-                    case "3":
+                    case 3:
                         Console.WriteLine("The user goes to the create topic webpage");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", false));
                         createTopic();
                         break;
-                    case "4":
+                    case 4:
                         Console.WriteLine("The user quit the programm");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("end connection", false));
                         endProgram();
@@ -278,9 +291,74 @@ namespace Server
         // ---------------------------------     PRIVATE MESSAGE PART     --------------------------------- 
 
 
-        private static void privateMsg()
+        private void privateMsg()
         {
-            ;
+            waitMessage();
+            listConversation(findProfile(req.getMessage())); // print all conversation of the profile
+        }
+
+        private void listConversation(Profile p)
+        {
+            List<String> nameChoosen = new List<string>();
+            string allConv = "Choose the conversation you want to join (enter the number):\n";
+            int i = 1;
+            if (p != null && p.getConversations().Count != 0)
+            {
+                foreach (string convName in p.getConversations().Keys)
+                {
+                    allConv += i.ToString();
+                    allConv += " : ";
+                    allConv += convName;
+                    allConv += "\n";
+                    nameChoosen.Add(convName);
+                    i++;
+                }
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("topics", allConv, i, false));
+                waitMessage();
+                conversationcPage(req.getMessage(),nameChoosen[req.getNumber()]);
+            }
+            else
+            {
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("topics", "You have no conversation", -1, false));
+                Thread.Sleep(1500); // give the time to the user to see the message
+            }
+        }
+
+        private void conversationcPage(string name, string titleDiscussion)
+        {
+            Profile p = findProfile(name);
+            Conversation conv = p.getConversationWithName(titleDiscussion);
+            bool _continue = true;
+            while (_continue)
+            {
+                int i = 0;
+                string printConv = "\t/////////////////////////////////////////////////\n";
+                printConv += "\t\t\t  " + titleDiscussion;
+                printConv += "\n\t/////////////////////////////////////////////////\n\n\n";
+                foreach (Comment c in conv.getComment())
+                {
+                    printConv += "     ";
+                    printConv += c.getUser();
+                    printConv += "\t-\t";
+                    printConv += conv.getTimingN(i);
+                    printConv += " :\n\n";
+                    printConv += c.getMessage();
+                    printConv += "\n------------------------------------\n";
+                    i++;
+                }
+
+                printConv += "\n\n\t***** ENTER A MESSAGE OR ENTER 'EXIT' TO QUIT *****\n";
+
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", printConv, false));
+                waitMessage();
+                if (req.getMessage().ToUpper() == "EXIT")
+                {
+                    Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page redirection", false));
+                    _continue = false;
+                }
+                else
+                    conv.addMessage(p,req.getMessage());
+            }
         }
 
         // ---------------------------------     CONSULT TOPICS PART     --------------------------------- 
@@ -290,8 +368,8 @@ namespace Server
         {
             listTopics(); 
             waitMessage();
-            int topicN = Int32.Parse(req.getMessage()) -1;
-            Console.WriteLine("The user has chosen the topic " + dbs.getTopic(topicN).getTitle());
+            int topicN = req.getNumber() -1;
+            Console.WriteLine("The user has chosen the topic " + dbs.getTopic(topicN).Title);
             topicPage(topicN);
         }
 
@@ -299,17 +377,15 @@ namespace Server
         {
             string topics = "Choose a topic among these topics (enter the number):\n";
             int i = 1;
-            List<Topic> list = dbs.getTopics();
-            foreach (Topic t in list)
+            foreach (Topic t in dbs.getTopics())
             {
                 topics += i.ToString();
                 topics += " : ";
-                topics += t.getTitle();
+                topics += t.Title;
                 topics += "\n";
                 i++;
             }
-            Network.Net.sendMsg(comm.GetStream(), new Network.Answer(i + " topics", topics, false));
-
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("topics", topics, i, false));
         }
 
         private void topicPage(int i)
@@ -318,9 +394,9 @@ namespace Server
             while (_continue)
             {
                 string printTopic = "\t/////////////////////////////////////////////////\n";
-                printTopic += "\t\t\t  " + dbs.getTopic(i).getTitle().ToUpper() + "\n";
+                printTopic += "\t\t\t  " + dbs.getTopic(i).Title.ToUpper() + "\n";
                 printTopic += "\t/////////////////////////////////////////////////\n\n\n";
-                foreach (Topic.Comment c in dbs.getTopic(i).getComments())
+                foreach (Comment c in dbs.getTopic(i).Comments)
                 {
                     printTopic += "     ";
                     printTopic += c.getUser();
@@ -350,10 +426,32 @@ namespace Server
             Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", "To create a topic, please enter its name : \n", false));
             waitMessage();
             int topicN = dbs.addNewTopic(req.getMessage());
-            Console.WriteLine("New topic +'" + req.getMessage() + "' created");
-            topicPage(topicN);
+            if (dbs.getTopic(topicN).addMember(findProfile(getName())))
+            {
+                Console.WriteLine("New topic +'" + req.getMessage() + "' created"); 
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("goto topic", false));
+                topicPage(topicN);
+            }
+            else
+            {
+                Console.WriteLine("ERROR 101 : bad name of user, doesn't exists in the database. Can't add it to the topic");
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("error", "An error has been encountered during the connection to the Topic", true));
+            }
         }
 
+        private string getName()
+        {
+            string name = "";
+
+            foreach (char c in req.getPurpose())
+            {
+                if (c != ' ') //  separate the name from the string
+                    name += c;
+                else
+                    break;
+            }
+            return name;
+        }
 
 
         private void waitMessage()
@@ -364,6 +462,16 @@ namespace Server
         private static void endProgram()
         {
             Network.Net.sendMsg(comm.GetStream(), new Network.Answer("end connection", "You have chosen to exit the webpage", false));
+        }
+
+        private Profile findProfile(string name)
+        {
+            foreach (Profile p in dbs.getProfiles())
+            {
+                if (p.login == name)
+                    return p;
+            }
+            return null;
         }
     }
 }
