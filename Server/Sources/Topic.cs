@@ -6,18 +6,37 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Topic
+    public class Topic : Agora
     {
         private string title;
+        private List<Profile> members;
+
+        public string Title
+        {
+            get => title;
+            set => title = value;
+        }
 
         public Topic(string t)
         {
-            title = t;
+            this.Title = t;
+            this.Comments = new List<Comment>();
+            members = new List<Profile>();
         }
 
-        public string getTitle()
+        public bool addMember(Profile p)
         {
-            return title;
+            if(p != null)
+            {
+                members.Add(p);
+                return true;
+            }
+            return false;
+        }
+
+        public List<Profile> getMembers()
+        {
+            return members;
         }
 
     }

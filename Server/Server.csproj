@@ -39,6 +39,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sources\Agora.cs" />
+    <Compile Include="Sources\Comment.cs" />
     <Compile Include="Sources\Conversation.cs" />
     <Compile Include="Sources\Database.cs" />
     <Compile Include="Sources\Message.cs" />
