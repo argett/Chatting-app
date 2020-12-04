@@ -259,7 +259,7 @@ namespace Server
             while (_continue)
             {
                 Console.WriteLine("The user is in the homepage");
-                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page choice", "What do you want to do ? \n1 : Send a private message \n2 : Connect to a topic \n3 : Create a topic \n4 : exit \nEnter 1/2/3/4 :", false));
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page choice", "What do you want to do ? \n1 : Send a private message \n2 : Connect to a topic \n3 : Create a topic \n4 : Add a new friend \n5 : exit \nEnter 1/2/3/4/5 :", false));
                 waitMessage();
                 switch (req.getNumber())
                 {
@@ -481,7 +481,7 @@ namespace Server
         private void createTopic()
         {
             Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", "To create a topic, please enter its name : \n", false));
-            waitMessage();
+            waitMessage(); 
             int topicN = dbs.addNewTopic(req.getMessage());
             if (dbs.getTopic(topicN).addMember(findProfile(getName())))
             {
@@ -496,11 +496,38 @@ namespace Server
             }
         }
 
+
         // ---------------------------------     ADD FRIEND PART     --------------------------------- 
+        
         private void addFriend()
         {
-            ;
+            waitMessage(); // wait to get the name of the user
+            string userName = req.getMessage();
+            string form = "Enter the number of the friend that you want to add :\n";
+            int id = 1;
+            List<String> potentialFriendsName = new List<string>();
+            foreach (Profile p in dbs.getProfiles())
+            {
+                if(p.login != userName) // a user can't be friend with himself
+                {
+                    form += id.ToString();
+                    form += " : ";
+                    form += p.login;
+                    form += "\n";
+                    potentialFriendsName.Add(p.login);
+                    id++;
+                }
+            }
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("add friend", form, id, false));
+            waitMessage();
+            // add the new friend to both profiles
+            findProfile(userName).addFriend(findProfile(potentialFriendsName[req.getNumber() - 1]));
+            findProfile(potentialFriendsName[req.getNumber() - 1]).addFriend(findProfile(userName));
+            Console.WriteLine(userName + " and " + potentialFriendsName[req.getNumber() - 1] + " are friends now");
         }
+
+
+        // ---------------------------------     USEFULL FUNCTION     --------------------------------- 
 
         private string getName()
         {
@@ -515,7 +542,6 @@ namespace Server
             }
             return name;
         }
-
 
         private void waitMessage()
         {

@@ -93,8 +93,11 @@ namespace Client
                 waitMessage(true); // print the homepage choices
                 do{
                     n = Int32.Parse(Console.ReadLine());
-                } while (n > 5 && n < 1);
+                } while (n > 5 || n < 1);
+
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request("home page redirection", n));
+                Console.WriteLine(" n =" + n.ToString());
+                Console.ReadLine();
                 waitMessage(false);  // get the redirection
                 switch (msg.getTitle())
                 {
@@ -139,8 +142,6 @@ namespace Client
                 else
                     discussionPage();
             }
-            else
-                waitMessage(true);
         }
 
         private void createPrivateMessage()
@@ -214,9 +215,20 @@ namespace Client
         
         private void addFriend()
         {
-            ;
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", this.name));
+            waitMessage(true); // print the instructions + list of users
+
+            int friendID;
+            do
+            {
+                friendID = Int32.Parse(Console.ReadLine());
+            } while (friendID > msg.getNumber() - 1 || friendID < 1);
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", friendID)); 
         }
 
+
+
+        // ---------------------------------     USEFULL FUNCTION     ---------------------------------
 
 
         private void exit()
