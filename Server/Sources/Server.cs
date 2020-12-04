@@ -43,8 +43,8 @@ namespace Server
             dbs.getTopic(1).addComment("Cathy Mini", "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio");
             dbs.getTopic(1).addComment("Oussama Lairbizar", "Sed totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt");
             dbs.addNewTopic("espace"); 
-            dbs.getTopic(2).addComment("Trou", "Noir");
-            dbs.getTopic(2).addComment("Etoile", "Soleil");
+            //dbs.getTopic(2).addComment("Trou", "Noir");
+            //dbs.getTopic(2).addComment("Etoile", "Soleil");
             dbs.addNewTopic("/r");
             dbs.getTopic(3).addComment("oui", "AmlTheAche013");
             dbs.getTopic(3).addComment("non", "blog");
@@ -59,11 +59,11 @@ namespace Server
             dbs.getProfileN(0).addConversation("un nom super cool", conv);
             dbs.getProfileN(1).addConversation("un nom super cool", conv);
             dbs.addNewProfile("a", "b");
-            dbs.getProfileN(0).addFriend(dbs.getProfileN(2));
+            /*dbs.getProfileN(0).addFriend(dbs.getProfileN(2));
             dbs.getProfileN(2).addFriend(dbs.getProfileN(0));
             conv = new Conversation(dbs.getProfileN(0), dbs.getProfileN(2));
             dbs.getProfileN(0).addConversation("un autre nom super cool", conv);
-            dbs.getProfileN(2).addConversation("un autre nom super cool", conv);
+            dbs.getProfileN(2).addConversation("un autre nom super cool", conv);*/
 
 
 
@@ -279,6 +279,11 @@ namespace Server
                         createTopic();
                         break;
                     case 4:
+                        Console.WriteLine("The user goes to add a friend webpage");
+                        Network.Net.sendMsg(comm.GetStream(), new Network.Answer("add friend", false));
+                        addFriend();
+                        break;
+                    case 5:
                         Console.WriteLine("The user quit the programm");
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("end connection", false));
                         endProgram();
@@ -313,9 +318,25 @@ namespace Server
                     nameChoosen.Add(convName);
                     i++;
                 }
-                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("topics", allConv, i, false));
+                allConv += i.ToString();
+                allConv += " : ";
+                allConv += "Create a new conversation\n";
+                i++;
+
+
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", allConv, i, false));
                 waitMessage();
-                conversationcPage(req.getMessage(),nameChoosen[req.getNumber()]);
+                if (req.getNumber() == i - 1)
+                {
+                    Console.WriteLine("The User creates a new private conversation");
+                    Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "create new", false));
+                    createNewConv(req.getMessage());
+                }
+                else
+                {
+                    Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "join existing", i-1, false));
+                    conversationcPage(req.getMessage(), nameChoosen[req.getNumber()-1]);
+                }
             }
             else
             {
@@ -328,6 +349,7 @@ namespace Server
         {
             Profile p = findProfile(name);
             Conversation conv = p.getConversationWithName(titleDiscussion);
+
             bool _continue = true;
             while (_continue)
             {
@@ -335,7 +357,7 @@ namespace Server
                 string printConv = "\t/////////////////////////////////////////////////\n";
                 printConv += "\t\t\t  " + titleDiscussion;
                 printConv += "\n\t/////////////////////////////////////////////////\n\n\n";
-                foreach (Comment c in conv.getComment())
+                foreach (Comment c in conv.getDiscussion())
                 {
                     printConv += "     ";
                     printConv += c.getUser();
@@ -359,6 +381,41 @@ namespace Server
                 else
                     conv.addMessage(p,req.getMessage());
             }
+        }
+
+        private void createNewConv(string nameUser)
+        {
+            Profile p = findProfile(nameUser);
+            if (p != null && p.getFriends().Count != 0)
+            {
+                string form = "Please enter first the new name of this conversation \nThen choose with which of your friends you want to create a conversation : \n";
+                int nbFriend = 1;
+                foreach (Profile friend in p.getFriends())
+                {
+                    form += nbFriend.ToString();
+                    form += " : ";
+                    form += friend.login;
+                    form += "\n";
+                    nbFriend++;
+                }
+
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("creation private message", form, nbFriend, false));
+                waitMessage();
+
+                // creation of the new conversation in both profile
+                Conversation conv = new Conversation(p, p.getFriends()[req.getNumber() - 1]);
+                p.addConversation(req.getMessage(), conv);
+                p.getFriends()[req.getNumber() - 1].addConversation(req.getMessage(), conv);
+                Console.WriteLine("New conversation added bewteen " + p.login + " and " + p.getFriends()[req.getNumber() - 1].login);
+                // we go to this conversation
+                conversationcPage(nameUser, req.getMessage());
+            }
+            else
+            {
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "You have no friends (sorry)", true));
+                Thread.Sleep(1500); // give the time to the user to see the message
+            }
+
         }
 
         // ---------------------------------     CONSULT TOPICS PART     --------------------------------- 
@@ -437,6 +494,12 @@ namespace Server
                 Console.WriteLine("ERROR 101 : bad name of user, doesn't exists in the database. Can't add it to the topic");
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("error", "An error has been encountered during the connection to the Topic", true));
             }
+        }
+
+        // ---------------------------------     ADD FRIEND PART     --------------------------------- 
+        private void addFriend()
+        {
+            ;
         }
 
         private string getName()

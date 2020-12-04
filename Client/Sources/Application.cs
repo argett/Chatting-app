@@ -18,6 +18,7 @@ namespace Client
          *  01/12/2020      20h - 20h30     23h - 00h  
          *  02/12/2020      15h - 19h30  
          *  03/12/2020      11h30 - 13h     14h - 15h      17h30 - 20h
+         *  04/12/2020      9h - 
          * 
          */
         static void Main(string[] args)

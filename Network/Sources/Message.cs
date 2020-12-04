@@ -84,7 +84,6 @@ namespace Network
     public class Answer : Message     // all messages sent by the server and received by the client
     {
         private string title;         // name of the conversation, topic
-        private List<string> content; // the list of message, topics
         private string message;       // if the message is a simple string (in general a message to print in user console)
         private bool error;
         private int number;
@@ -93,7 +92,6 @@ namespace Network
         {
             title = tit;
             error = err;
-            content = null;
             message = null;
             number = -1;
         }
@@ -102,7 +100,6 @@ namespace Network
             title = tit;
             error = err;
             number = nb;
-            content = null;
             message = null;
         }
 
@@ -111,7 +108,6 @@ namespace Network
             title = tit;
             error = err;
             message = msg;
-            content = null;
             number = -1;
         }
 
@@ -121,16 +117,6 @@ namespace Network
             error = err;
             message = msg;
             number = n;
-            content = null;
-        }
-
-        public Answer(string tit, List<string> cont, bool err)
-        {
-            title = tit;
-            content = cont;
-            error = err;
-            message = null;
-            number = -1;
         }
 
         public int getNumber()
@@ -141,11 +127,6 @@ namespace Network
         public string getTitle()
         {
             return title;
-        }
-
-        public List<string> getContent()
-        {
-            return content;
         }
 
         public string getMessage()
@@ -162,14 +143,6 @@ namespace Network
         {
             string s = "";
             // no need to print the title, it serves only to the program
-
-            if(content != null)
-            {
-                foreach (string t in content)
-                {
-                    s += t + " ";
-                }
-            }
 
             if (message != null)
                 s += message;

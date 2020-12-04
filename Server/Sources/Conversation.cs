@@ -46,7 +46,7 @@ namespace Server
             return discussion[i];
         }
 
-        public List<Comment> getComment()
+        public List<Comment> getDiscussion()
         {
             return discussion;
         }

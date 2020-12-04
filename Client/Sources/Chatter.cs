@@ -93,7 +93,7 @@ namespace Client
                 waitMessage(true); // print the homepage choices
                 do{
                     n = Int32.Parse(Console.ReadLine());
-                } while (n > 4 && n < 1);
+                } while (n > 5 && n < 1);
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request("home page redirection", n));
                 waitMessage(false);  // get the redirection
                 switch (msg.getTitle())
@@ -106,6 +106,9 @@ namespace Client
                         break;
                     case "create topic":
                         createTopic();
+                        break;
+                    case "add friend":
+                        addFriend();
                         break;
                     case "end connection":
                         exit();
@@ -120,7 +123,7 @@ namespace Client
         public void privateMessageHome()
         {
             Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", this.name)); //we give the name of the profile in order the databse knows which conversation to give
-            waitMessage(true);
+            waitMessage(true); // print all the disponible conversation
             if(msg.getNumber() != -1)
             {
                 int convNB;
@@ -129,10 +132,38 @@ namespace Client
                     convNB = Int32.Parse(Console.ReadLine());
                 } while (convNB > msg.getNumber() - 1 || convNB < 1);
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", this.name, convNB)); //we give the name of the profile in order the databse knows which conversation to give
-                discussionPage();
+                
+                waitMessage(false); // wait the decision of the server (create new or connect)
+                if (msg.getMessage() == "create new")
+                    createPrivateMessage();
+                else
+                    discussionPage();
             }
             else
                 waitMessage(true);
+        }
+
+        private void createPrivateMessage()
+        {
+            waitMessage(true); // show instructions
+
+            if (!msg.getError())
+            {
+                string name = Console.ReadLine();
+                int friendNB;
+                do
+                {
+                    friendNB = Int32.Parse(Console.ReadLine());
+                } while (friendNB > msg.getNumber() - 1 || friendNB < 1);
+
+                Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", name, friendNB));
+                discussionPage();
+            }
+            else 
+            {
+                Console.WriteLine(msg.getMessage());
+            }
+           
         }
 
 
@@ -175,7 +206,15 @@ namespace Client
             if (!msg.getError())
                 discussionPage(); // after creating the topic, we go to its page
             else
-                Console.WriteLine(msg.getContent());
+                Console.WriteLine(msg.getMessage());
+        }
+
+
+        // ---------------------------------     ADD FRIEND PART     --------------------------------- 
+        
+        private void addFriend()
+        {
+            ;
         }
 
 
