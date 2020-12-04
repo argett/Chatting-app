@@ -83,7 +83,9 @@ namespace Client
             }
         }
 
+
         // ---------------------------------     HOME WEBSITE PART     --------------------------------- 
+
 
         private void homeServer()
         {
@@ -96,8 +98,6 @@ namespace Client
                 } while (n > 5 || n < 1);
 
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request("home page redirection", n));
-                Console.WriteLine(" n =" + n.ToString());
-                Console.ReadLine();
                 waitMessage(false);  // get the redirection
                 switch (msg.getTitle())
                 {
@@ -160,15 +160,12 @@ namespace Client
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", name, friendNB));
                 discussionPage();
             }
-            else 
-            {
-                Console.WriteLine(msg.getMessage());
-            }
-           
+            // no else print error, it will be writen in the homeServer() function
         }
 
 
         // ---------------------------------     CONSULT TOPICS PART     --------------------------------- 
+
 
         private void topics()
         {
@@ -195,8 +192,8 @@ namespace Client
         }
 
 
-
         // ---------------------------------     CREATE TOPICS PART     --------------------------------- 
+
         
         private void createTopic()
         {
@@ -212,6 +209,7 @@ namespace Client
 
 
         // ---------------------------------     ADD FRIEND PART     --------------------------------- 
+
         
         private void addFriend()
         {
@@ -225,7 +223,6 @@ namespace Client
             } while (friendID > msg.getNumber() - 1 || friendID < 1);
             Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", friendID)); 
         }
-
 
 
         // ---------------------------------     USEFULL FUNCTION     ---------------------------------

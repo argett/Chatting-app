@@ -307,41 +307,32 @@ namespace Server
             List<String> nameChoosen = new List<string>();
             string allConv = "Choose the conversation you want to join (enter the number):\n";
             int i = 1;
-            if (p != null && p.getConversations().Count != 0)
+            foreach (string convName in p.getConversations().Keys)
             {
-                foreach (string convName in p.getConversations().Keys)
-                {
-                    allConv += i.ToString();
-                    allConv += " : ";
-                    allConv += convName;
-                    allConv += "\n";
-                    nameChoosen.Add(convName);
-                    i++;
-                }
                 allConv += i.ToString();
                 allConv += " : ";
-                allConv += "Create a new conversation\n";
+                allConv += convName;
+                allConv += "\n";
+                nameChoosen.Add(convName);
                 i++;
+            }
+            allConv += i.ToString();
+            allConv += " : ";
+            allConv += "Create a new conversation\n";
+            i++;
+            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", allConv, i, false));
+            waitMessage();
 
-
-                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", allConv, i, false));
-                waitMessage();
-                if (req.getNumber() == i - 1)
-                {
-                    Console.WriteLine("The User creates a new private conversation");
-                    Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "create new", false));
-                    createNewConv(req.getMessage());
-                }
-                else
-                {
-                    Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "join existing", i-1, false));
-                    conversationcPage(req.getMessage(), nameChoosen[req.getNumber()-1]);
-                }
+            if (req.getNumber() == i-1)
+            {
+                Console.WriteLine("The User creates a new private conversation");
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "create new", false));
+                createNewConv(req.getMessage());
             }
             else
             {
-                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("topics", "You have no conversation", -1, false));
-                Thread.Sleep(1500); // give the time to the user to see the message
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "join existing", i-1, false));
+                conversationcPage(req.getMessage(), nameChoosen[req.getNumber()-1]);
             }
         }
 
@@ -386,7 +377,7 @@ namespace Server
         private void createNewConv(string nameUser)
         {
             Profile p = findProfile(nameUser);
-            if (p != null && p.getFriends().Count != 0)
+            if (p.getFriends().Count != 0)
             {
                 string form = "Please enter first the new name of this conversation \nThen choose with which of your friends you want to create a conversation : \n";
                 int nbFriend = 1;
@@ -412,7 +403,7 @@ namespace Server
             }
             else
             {
-                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "You have no friends (sorry)", true));
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "You have no friends (sorry)", false));
                 Thread.Sleep(1500); // give the time to the user to see the message
             }
 
