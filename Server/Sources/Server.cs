@@ -15,11 +15,13 @@ namespace Server
         public static Semaphore semaphore = new Semaphore(1,1);
         private int port;
         private static byte nbUser;
+        private static Request req;
 
         public Server(int n)
         {
             port = n;
             nbUser++;
+            req = null;
         }
 
         // ---------------------------------     CONNECTION PART     ---------------------------------     
@@ -63,7 +65,7 @@ namespace Server
             {
                 Console.WriteLine(", the user is choosing between create or use an existing account");
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("checkpoint message", "Hello, do you want to create a New account or connect to an Existing one ? N/E : ", false));
-                Request req = waitMessage();
+                waitMessage();
                 if (checkConnChoice(req.getMessage())) // connect the user at the database
                 {
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("connection allowed", false));
@@ -108,8 +110,7 @@ namespace Server
              ****************/
             private void createUser()
             {
-                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create user", "Please choose your new ID and your PASSWORD (no space): ", false));
-                Request req = waitMessage();
+                waitMessage();
 
                 string id = "", psw = "", turn = "id";
                 foreach (char s in req.getMessage())
@@ -147,7 +148,7 @@ namespace Server
 
                 while (true) // continue until the user is conncted or wants to leave
                 {
-                    Request req = waitMessage();
+                    waitMessage();
                     string[] data = separateData(req.getMessage());
 
                     if (data[0] == "exit")
@@ -225,7 +226,7 @@ namespace Server
                 {
                     Console.WriteLine("The user is in the homepage");
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page choice", "What do you want to do ? \n1 : Send a private message \n2 : Connect to a topic \n3 : Create a topic \n4 : Add a new friend \n5 : exit \nEnter 1/2/3/4/5 :", false));
-                    Request req = waitMessage();
+                    waitMessage();
                     switch (req.getNumber())
                     {
                         case 1:
@@ -263,7 +264,7 @@ namespace Server
 
             private void privateMsg()
             {
-                Request req = waitMessage();
+                waitMessage();
                 listConversation(findProfile(req.getMessage())); // print all conversation of the profile
             }
 
@@ -286,7 +287,7 @@ namespace Server
                 allConv += "Create a new conversation\n";
                 i++;
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", allConv, i, false));
-                Request req = waitMessage();
+                waitMessage();
                 if (req.getNumber() == i - 1)
                 {
                     Console.WriteLine("The User creates a new private conversation");
@@ -327,7 +328,7 @@ namespace Server
                     printConv += "\n\n\t***** ENTER A MESSAGE OR ENTER 'EXIT' TO QUIT *****\n";
 
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", printConv, false));
-                    Request req = waitMessage();
+                    waitMessage();
                     if (req.getMessage().ToUpper() == "EXIT")
                     {
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page redirection", false));
@@ -355,7 +356,7 @@ namespace Server
                     }
 
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("creation private message", form, nbFriend, false));
-                    Request req = waitMessage();
+                    waitMessage();
 
                     // creation of the new conversation in both profile
                     Conversation conv = new Conversation(p, p.getFriends()[req.getNumber() - 1]);
@@ -379,7 +380,7 @@ namespace Server
             private void connTopic()
             {
                 listTopics();
-                Request req = waitMessage();
+                 waitMessage();
                 int topicN = req.getNumber() - 1;
 
                 semaphore.WaitOne();
@@ -431,7 +432,7 @@ namespace Server
                     printTopic += "\n\n\t***** ADD A COMMENT OR ENTER 'EXIT' TO QUIT *****\n";
 
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("topic", printTopic, false));
-                    Request req = waitMessage();
+                    waitMessage();
                     if (req.getMessage().ToUpper() == "EXIT")
                     {
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page redirection", false));
@@ -452,7 +453,7 @@ namespace Server
             private void createTopic()
             {
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", "To create a topic, please enter its name : \n", false));
-                Request req = waitMessage();
+                waitMessage();
 
                 semaphore.WaitOne();
                 int topicN = Database.addNewTopic(req.getMessage());
@@ -478,7 +479,7 @@ namespace Server
 
             private void addFriend()
             {
-                Request req = waitMessage(); // wait to get the name of the user
+                waitMessage(); // wait to get the name of the user
                 string userName = req.getMessage();
                 string form = "Enter the number of the friend that you want to add :\n";
                 int id = 1;
@@ -528,9 +529,9 @@ namespace Server
                 return name;
             }
 
-            private Request waitMessage()
+            private void waitMessage()
             {
-                return (Request)Network.Net.rcvMsg(comm.GetStream());
+                 req = (Request)Network.Net.rcvMsg(comm.GetStream());
             }
 
             private static void endProgram()
@@ -555,8 +556,6 @@ namespace Server
                         return p;
                     }
                 }
-                Console.WriteLine("cptc");
-
                 semaphore.Release(1);
                 return null;
             }
