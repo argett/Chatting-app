@@ -256,7 +256,5 @@ namespace Client
                 Console.WriteLine(msg);
             }
         }
-
-
     }
 }

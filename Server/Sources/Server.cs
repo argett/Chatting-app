@@ -438,10 +438,10 @@ namespace Server
                         Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page redirection", false));
                         _continue = false;
                     }
-                    else
+                    else if(req.getMessage() != "")
                     {
                         semaphore.WaitOne();
-                        Database.getTopic(i).addComment(req.getPurpose(), req.getMessage());
+                        Database.getTopic(i).addComment(req.getTarget(), req.getMessage());
                         semaphore.Release(1);
                     }
                         
@@ -513,7 +513,7 @@ namespace Server
             }
 
 
-            // ---------------------------------     USEFULL FUNCTION     --------------------------------- 
+            // ---------------------------------     USEFULL FUNCTIONS     --------------------------------- 
 
             private string getName(string s)
             {
