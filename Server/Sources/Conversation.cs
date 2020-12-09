@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    [Serializable]
     public class Conversation : Agora
     {
         private Profile user1;

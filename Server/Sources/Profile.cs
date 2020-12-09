@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    [Serializable]
     public class Profile
     {
         public string login;

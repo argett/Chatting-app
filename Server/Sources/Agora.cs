@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    [Serializable]
     public abstract class Agora
     {
         private List<Comment> comments;

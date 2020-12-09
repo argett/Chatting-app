@@ -7,6 +7,7 @@ namespace Client
     class Application
     {
         public static Semaphore conn;
+        byte userN;
 
         /* HEURES PASSES :
          * 
@@ -18,8 +19,8 @@ namespace Client
          *  01/12/2020   1h30   20h - 20h30     23h - 00h  
          *  02/12/2020   4h30   15h - 19h30  
          *  03/12/2020   5h     11h30 - 13h     14h - 15h      17h30 - 20h
-         *  04/12/2020   3h30   9h - 12h30      14h - 
-         * 
+         *  04/12/2020   8h30   9h - 12h30      14h - 19h
+         *  09/12/2020          18h-
          */
         static void Main(string[] args)
         {
