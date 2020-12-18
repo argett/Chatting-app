@@ -110,6 +110,7 @@ namespace Server
              ****************/
             private void createUser()
             {
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("creation new user", "Please enter your new ID and PASSWORD", false));
                 waitMessage();
 
                 string id = "", psw = "", turn = "id";
@@ -368,7 +369,7 @@ namespace Server
                 }
                 else
                 {
-                    Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "You have no friends (sorry)", false));
+                    Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", "You have no friends (sorry)", true));
                     Thread.Sleep(1500); // give the time to the user to see the message
                 }
 

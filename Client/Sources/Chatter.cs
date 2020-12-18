@@ -214,12 +214,16 @@ namespace Client
             Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", this.name));
             waitMessage(true); // print the instructions + list of users
 
-            int friendID;
-            do
+            if(!msg.getError()) // if there is at least 1 friend
             {
-                friendID = readNumber();
-            } while (friendID > msg.getNumber() - 1 || friendID < 1);
-            Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", friendID)); 
+                int friendID;
+                do
+                {
+                    friendID = readNumber();
+                } while (friendID > msg.getNumber() - 1 || friendID < 1);
+                Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", friendID));
+            }
+            
         }
 
 
