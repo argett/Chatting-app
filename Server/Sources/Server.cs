@@ -485,11 +485,23 @@ namespace Server
                 string form = "Enter the number of the friend that you want to add :\n";
                 int id = 1;
                 List<String> potentialFriendsName = new List<string>();
+                List<Profile> friends = findProfile(req.getMessage()).getFriends(); //list of exisiting friends
 
                 semaphore.WaitOne();
+
+
                 foreach (Profile p in Database.getProfiles())
                 {
-                    if (p.login != userName) // a user can't be friend with himself
+                    bool find = false;
+                    // dont print someone that is already the friend
+                    foreach(Profile f in friends)
+                    {
+                        if (p.login == f.login)
+                            find = true;
+                    }
+
+
+                    if (!find && p.login != userName) // a user can't be friend with himself
                     {
                         form += id.ToString();
                         form += " : ";

@@ -37,12 +37,12 @@ namespace Server
 
             Database.addNewProfile("li", "fg");
             Database.addNewProfile("oui", "non");
+            Database.addNewProfile("a", "b");
             Database.getProfileN(0).addFriend(Database.getProfileN(1));
             Database.getProfileN(1).addFriend(Database.getProfileN(0));
             Conversation conv = new Conversation(Database.getProfileN(0), Database.getProfileN(1));
             Database.getProfileN(0).addConversation("un nom super cool", conv);
             Database.getProfileN(1).addConversation("un nom super cool", conv);
-            Database.addNewProfile("a", "b");
             Database.getProfileN(0).addFriend(Database.getProfileN(2));
             Database.getProfileN(2).addFriend(Database.getProfileN(0));
             conv = new Conversation(Database.getProfileN(0), Database.getProfileN(2));
