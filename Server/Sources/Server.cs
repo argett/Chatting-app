@@ -460,7 +460,7 @@ namespace Server
                 int topicN = Database.addNewTopic(req.getMessage());
                 semaphore.Release(1);
 
-                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("info", "you can send the name", false));
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("checkpoint message", "you can send the name", false));
                 waitMessage(); //get the name of the user creating the topic
                 if (Database.getTopic(topicN).addMember(findProfile(req.getMessage())))
                 {

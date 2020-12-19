@@ -12,6 +12,8 @@ namespace Server
         {
             Database.load();
             /*
+            TEST REALISES POUR LA CREATION DE LA BDD
+
             Database.addNewTopic("latin");
             Database.getTopic(0).addComment("xXx_D4rk_Sasuk3_xXx", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum");
             Database.getTopic(0).addComment("le_genie du MAL", "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?");

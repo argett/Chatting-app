@@ -58,15 +58,16 @@ namespace Server
         {
             return allTopics[i];
         }
+
         public static void save()
         {
-            string filenamePro = "C:/Users/lilian/Documents/Projets Git/C# - Chatting app/dbs-profiles.out"; // chaine verbatim
+            string filenamePro = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName + "\\dbs-profiles.out";
             FileStream fs1 = new FileStream(filenamePro, FileMode.Create);
             IFormatter formatter1 = new BinaryFormatter();
             formatter1.Serialize(fs1, allProfiles);
             fs1.Close();
-            
-            string filenameTop = "C:/Users/lilian/Documents/Projets Git/C# - Chatting app/dbs-topics.out"; // chaine verbatim
+
+            string filenameTop = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName + "\\dbs-topics.out";
             FileStream fs2 = new FileStream(filenameTop, FileMode.Create);
             IFormatter formatter2 = new BinaryFormatter();
             formatter2.Serialize(fs2, allTopics);
@@ -77,14 +78,14 @@ namespace Server
         {
             try
             {
-                string filenamePro = "C:/Users/lilian/Documents/Projets Git/C# - Chatting app/dbs-profiles.out"; // chaine verbatim
-                FileStream fs1 = new FileStream(filenamePro, FileMode.Open);
+                string filenameTop = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName + "\\dbs-profiles.out";
+                FileStream fs1 = new FileStream(filenameTop, FileMode.Open);
                 IFormatter formatter1 = new BinaryFormatter();
                 allProfiles = (List<Profile>)formatter1.Deserialize(fs1);
                 fs1.Close();
 
-                string filenameTop = "C:/Users/lilian/Documents/Projets Git/C# - Chatting app/dbs-topics.out"; // chaine verbatim
-                FileStream fs2 = new FileStream(filenameTop, FileMode.Open);
+                string filenameTop1 = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName + "\\dbs-topics.out";
+                FileStream fs2 = new FileStream(filenameTop1, FileMode.Open);
                 IFormatter formatter2 = new BinaryFormatter();
                 allTopics = (List<Topic>)formatter2.Deserialize(fs2);
                 fs2.Close();

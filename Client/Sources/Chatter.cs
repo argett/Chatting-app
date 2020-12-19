@@ -32,7 +32,7 @@ namespace Client
 
         /****************
          * 
-         * the human start pinging the server to say "i want to connect"
+         * the client start pinging the server to say "i want to connect"
          * serve connecting to an account and/or creating a new one
          * 
          ****************/
@@ -245,6 +245,7 @@ namespace Client
             }
             return n;
         }
+
         private void exit()
         {
             Console.WriteLine("\nPress any key to quit...");
