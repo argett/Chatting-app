@@ -454,22 +454,24 @@ namespace Server
             private void createTopic()
             {
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", "To create a topic, please enter its name : \n", false));
-                waitMessage();
+                waitMessage(); // wait the name of the topic
 
                 semaphore.WaitOne();
                 int topicN = Database.addNewTopic(req.getMessage());
-                if (Database.getTopic(topicN).addMember(findProfile(getName(req.getMessage()))))
+                semaphore.Release(1);
+
+                Network.Net.sendMsg(comm.GetStream(), new Network.Answer("info", "you can send the name", false));
+                waitMessage(); //get the name of the user creating the topic
+                if (Database.getTopic(topicN).addMember(findProfile(req.getMessage())))
                 {
                     Console.WriteLine("New topic +'" + req.getMessage() + "' created");
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("goto topic", false));
                     Database.save();
-                    semaphore.Release(1);
 
                     topicPage(topicN);
                 }
                 else
                 {
-                    semaphore.Release(1);
                     Console.WriteLine("ERROR 101 : bad name of user, doesn't exists in the database. Can't add it to the topic");
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("error", "An error has been encountered during the connection to the Topic", true));
                 }

@@ -197,8 +197,10 @@ namespace Client
         {
             waitMessage(true); // instructions creating a topic
             string title = Console.ReadLine();
-            Network.Net.sendMsg(comm.GetStream(), new Network.Request(name + " create topic", title));
-            waitMessage(false);
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request(name + "create topic", title));
+            waitMessage(false); // wait validation in order to send the name  of the chatter
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("create topic", this.name));
+            waitMessage(false); // wait the final answer
             if (!msg.getError())
                 discussionPage(); // after creating the topic, we go to its page
             else
