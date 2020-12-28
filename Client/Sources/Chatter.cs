@@ -138,7 +138,7 @@ namespace Client
                 if (msg.getMessage() == "create new")
                     createPrivateMessage();
                 else
-                    discussionPage();
+                    discussionPage(); // the function that handle the communication
             }
         }
 
@@ -174,7 +174,7 @@ namespace Client
                 topic = readNumber();
             } while (topic > msg.getNumber()-1 || topic < 1);
 
-            Network.Net.sendMsg(comm.GetStream(), new Network.Request("topics", topic));
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("topics", this.name, topic));
             discussionPage();
         }
 
@@ -240,7 +240,7 @@ namespace Client
             }
             catch (Exception e)
             {
-                Console.WriteLine("This is not a number");
+                Console.WriteLine("This is not a number, " + e);
                 n = -1;
             }
             return n;

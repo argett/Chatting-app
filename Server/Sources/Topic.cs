@@ -27,9 +27,18 @@ namespace Server
 
         public bool addMember(Profile p)
         {
+            bool find = false;
             if(p != null)
             {
-                members.Add(p);
+                //check if the profile is already in the topic
+                foreach(Profile temp in members)
+                {
+                    if (temp == p)
+                        find = true;
+                }
+                if(!find)
+                    members.Add(p);
+
                 return true;
             }
             return false;

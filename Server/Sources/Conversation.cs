@@ -62,6 +62,14 @@ namespace Server
             return surnameUser2;
         }
 
+        public void setSurname(Profile user, string surnameFriend)
+        {
+            if (user == user1)
+                surnameUser2 = surnameFriend;
+            else
+                surnameUser1 = surnameFriend;
+        }
+
         public DateTime getTimingN(int i)
         {
             return time[i];

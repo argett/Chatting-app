@@ -52,6 +52,7 @@ namespace Server
             }
             else
             {
+                Console.WriteLine("ERROR 404 : can't find the conversation with name " + title);
                 return null;
             }
         }

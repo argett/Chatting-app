@@ -308,6 +308,7 @@ namespace Server
                 Conversation conv = p.getConversationWithName(titleDiscussion);
 
                 bool _continue = true;
+                bool help = false;
                 while (_continue)
                 {
                     int i = 0;
@@ -326,17 +327,35 @@ namespace Server
                         i++;
                     }
 
-                    printConv += "\n\n\t***** ENTER A MESSAGE OR ENTER 'EXIT' TO QUIT *****\n";
+                    if (help)
+                    {
+                        printConv += "\nhere are the existing commands : \n/surname <>  - to rename your friend surname\n";
+                        printConv += "(don't put the \"<>\")";
+                        help = false;
+                    }
 
+                    printConv += "\n\n\t***** ENTER A MESSAGE OR ENTER 'EXIT' TO QUIT *** /help TO SEE COMMANDS *****\n";
+                    
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("private message", printConv, false));
                     waitMessage();
-                    if (req.getMessage().ToUpper() == "EXIT")
+                    switch (getString(req.getMessage().ToUpper(),1))
                     {
-                        Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page redirection", false));
-                        _continue = false;
-                    }
-                    else
-                        conv.addMessage(p, req.getMessage());
+                        case "EXIT":
+                            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page redirection", false));
+                            _continue = false;
+                            break;
+                        case "/HELP":
+                            help = true;
+                            break;
+                        case "/SURNAME":
+                            conv.setSurname(p, getString(req.getMessage(), 2));
+                            break;
+                        case "":
+                            break; // do not empty messages
+                        default:
+                            conv.addMessage(p, req.getMessage());
+                            break;
+                    }                        
                 }
             }
 
@@ -381,11 +400,13 @@ namespace Server
             private void connTopic()
             {
                 listTopics();
-                 waitMessage();
+                waitMessage();
                 int topicN = req.getNumber() - 1;
+                Profile user = findProfile(req.getMessage());
 
                 semaphore.WaitOne();
                 Console.WriteLine("The user has chosen the topic " + Database.getTopic(topicN).Title);
+                Database.getTopic(topicN).addMember(user);
                 semaphore.Release(1);
 
                 topicPage(topicN);
@@ -413,6 +434,8 @@ namespace Server
             private void topicPage(int i)
             {
                 bool _continue = true;
+                bool help = false;
+                bool seeUsers = false;
                 while (_continue)
                 {
 
@@ -430,22 +453,46 @@ namespace Server
                     }
                     semaphore.Release(1);
 
-                    printTopic += "\n\n\t***** ADD A COMMENT OR ENTER 'EXIT' TO QUIT *****\n";
+                    if (help)
+                    {
+                        printTopic += "\nhere are the existing commands : \n/users  - to see the list of the users in this topic\n";
+                        printTopic += "(don't put the \"<>\")";
+                        help = false;
+                    }
+                    if (seeUsers)
+                    {
+                        printTopic += "\nList of the users connected to this topic :\n";
+                        foreach (Profile p in Database.getTopic(i).getMembers())
+                            printTopic += p.login + " - ";
+                        seeUsers = false;
+                    }
+
+                    printTopic += "\n\n\t*****ADD A COMMENT OR ENTER 'EXIT' TO QUIT *** /help TO SEE COMMANDS *****\n";
 
                     Network.Net.sendMsg(comm.GetStream(), new Network.Answer("topic", printTopic, false));
                     waitMessage();
-                    if (req.getMessage().ToUpper() == "EXIT")
+
+                    switch (getString(req.getMessage().ToUpper(), 1))
                     {
-                        Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page redirection", false));
-                        _continue = false;
+                        case "EXIT":
+                            Network.Net.sendMsg(comm.GetStream(), new Network.Answer("home page redirection", false));
+                            _continue = false;
+                            break;
+                        case "/HELP":
+                            help = true;
+                            break;
+                        case "/USERS":
+                            seeUsers = true;
+                            break;
+                        case "":
+                            break; // do not empty messages
+                        default:
+                            semaphore.WaitOne();
+                            Database.getTopic(i).addComment(req.getTarget(), req.getMessage());
+                            semaphore.Release(1);
+                            break;
                     }
-                    else if(req.getMessage() != "")
-                    {
-                        semaphore.WaitOne();
-                        Database.getTopic(i).addComment(req.getTarget(), req.getMessage());
-                        semaphore.Release(1);
-                    }
-                        
+
                 }
             }
 
@@ -462,6 +509,7 @@ namespace Server
 
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("checkpoint message", "you can send the name", false));
                 waitMessage(); //get the name of the user creating the topic
+
                 if (Database.getTopic(topicN).addMember(findProfile(req.getMessage())))
                 {
                     Console.WriteLine("New topic +'" + req.getMessage() + "' created");
@@ -530,18 +578,26 @@ namespace Server
 
             // ---------------------------------     USEFULL FUNCTIONS     --------------------------------- 
 
-            private string getName(string s)
+            private string getString(string s, int part)
             {
-                string name = "";
+                // part is the part we want in the string seperated by a space (start at 1)
+                string result = "";
+                int actual_part = 1;
 
                 foreach (char c in s)
                 {
-                    if (c != ' ') //  separate the name from the string
-                        name += c;
+                    if (c != ' ')
+                    {
+                        if (actual_part == part)
+                            result += c;
+                    }
                     else
-                        break;
+                        actual_part++;
+
+                    if (actual_part > part)
+                        break; // no need to continue further, we have the string we wanted
                 }
-                return name;
+                return result;
             }
 
             private void waitMessage()
