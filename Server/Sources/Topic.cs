@@ -20,8 +20,8 @@ namespace Server
 
         public Topic(string t)
         {
-            this.Title = t;
-            this.Comments = new List<Comment>();
+            Title = t;
+            this.Discussion = new List<Comment>();
             members = new List<Profile>();
         }
 

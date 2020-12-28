@@ -44,7 +44,6 @@
     <Compile Include="Sources\Comment.cs" />
     <Compile Include="Sources\Conversation.cs" />
     <Compile Include="Sources\Database.cs" />
-    <Compile Include="Sources\Message.cs" />
     <Compile Include="Sources\Profile.cs" />
     <Compile Include="Sources\Server.cs" />
     <Compile Include="Sources\Topic.cs" />

@@ -443,7 +443,7 @@ namespace Server
                     string printTopic = "\t/////////////////////////////////////////////////\n";
                     printTopic += "\t\t\t  " + Database.getTopic(i).Title.ToUpper() + "\n";
                     printTopic += "\t/////////////////////////////////////////////////\n\n\n";
-                    foreach (Comment c in Database.getTopic(i).Comments)
+                    foreach (Comment c in Database.getTopic(i).Discussion)
                     {
                         printTopic += "     ";
                         printTopic += c.getUser();
