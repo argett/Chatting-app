@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    [Serializable]
     public class Topic : Agora
     {
         private string title;
@@ -19,16 +20,25 @@ namespace Server
 
         public Topic(string t)
         {
-            this.Title = t;
-            this.Comments = new List<Comment>();
+            Title = t;
+            this.Discussion = new List<Comment>();
             members = new List<Profile>();
         }
 
         public bool addMember(Profile p)
         {
+            bool find = false;
             if(p != null)
             {
-                members.Add(p);
+                //check if the profile is already in the topic
+                foreach(Profile temp in members)
+                {
+                    if (temp == p)
+                        find = true;
+                }
+                if(!find)
+                    members.Add(p);
+
                 return true;
             }
             return false;

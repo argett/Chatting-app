@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    [Serializable]
     public class Conversation : Agora
     {
         private Profile user1;
@@ -14,7 +15,6 @@ namespace Server
         private Profile user2;
         private string surnameUser2;
 
-        private List<Comment> discussion;
         private List<DateTime> time; // time of the message when it was sent
 
         public Conversation(Profile p1, Profile p2)
@@ -25,30 +25,30 @@ namespace Server
             surnameUser2 = p2.login;
 
             time = new List<DateTime>();
-            discussion = new List<Comment>();
+            Discussion = new List<Comment>();
         }
 
         public void addMessage(Profile sender, string msg)
         {
             if(sender == user1)
             {
-                discussion.Add(new Comment(surnameUser1, msg));
+                addComment(surnameUser1, msg);
             }
             else
             {
-                discussion.Add(new Comment(surnameUser2, msg));
+                addComment(surnameUser2, msg);
             }
             time.Add(DateTime.Now);
         }
 
         public Comment getCommentN(int i)
         {
-            return discussion[i];
+            return Discussion[i];
         }
 
         public List<Comment> getDiscussion()
         {
-            return discussion;
+            return Discussion;
         }
 
         public string getSurname1()
@@ -59,6 +59,14 @@ namespace Server
         public string getSurname2()
         {
             return surnameUser2;
+        }
+
+        public void setSurname(Profile user, string surnameFriend)
+        {
+            if (user == user1)
+                surnameUser2 = surnameFriend;
+            else
+                surnameUser1 = surnameFriend;
         }
 
         public DateTime getTimingN(int i)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using Network;
@@ -12,7 +14,7 @@ namespace Client
         private TcpClient comm;
         private string hostname;
         private int port;
-
+        private Thread client;
         private Answer msg;
 
         public Chatter(string x, string h, int p)
@@ -21,6 +23,7 @@ namespace Client
             hostname = h;
             port = p;
             comm = null;
+            msg = null;
         }
 
 
@@ -29,7 +32,7 @@ namespace Client
 
         /****************
          * 
-         * the human start pinging the server to say "i want to connect"
+         * the client start pinging the server to say "i want to connect"
          * serve connecting to an account and/or creating a new one
          * 
          ****************/
@@ -52,10 +55,11 @@ namespace Client
                     psw = Console.ReadLine();
                     res = id + " " + psw;
                     Network.Net.sendMsg(comm.GetStream(), new Network.Request("connection", res));
+                    this.name = id;
                 }
             }
-
-            resConnection(id);
+            client = new Thread(new ThreadStart(resConnection));
+            client.Start();
         }
 
         /****************
@@ -63,24 +67,17 @@ namespace Client
          * call others function depending on the result of the connection
          * 
          ****************/
-        private void resConnection(string id)
+        private void resConnection()
         {
             waitMessage(false);
             if (msg.getTitle() == "connection allowed")
-            {
-                this.name = id; // now the chatter IS the pseudo
                 homeServer();
-            }
             else if (msg.getTitle() == "connection denied")
-            {
                 Console.WriteLine("Exiting the website...");
-                exit();
-            }
             else
-            {
                 Console.WriteLine("ERROR 404 : failure in result of connection");
-                exit();
-            }
+
+            exit();
         }
 
 
@@ -90,11 +87,12 @@ namespace Client
         private void homeServer()
         {
             int n;
-            while (true)
+            bool _continue = true;
+            while (_continue)
             {
                 waitMessage(true); // print the homepage choices
                 do{
-                    n = Int32.Parse(Console.ReadLine());
+                    n = readNumber();
                 } while (n > 5 || n < 1);
 
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request("home page redirection", n));
@@ -114,7 +112,7 @@ namespace Client
                         addFriend();
                         break;
                     case "end connection":
-                        exit();
+                        _continue = false;
                         break;
                 }
             }
@@ -132,15 +130,15 @@ namespace Client
                 int convNB;
                 do
                 {
-                    convNB = Int32.Parse(Console.ReadLine());
+                    convNB = readNumber();
                 } while (convNB > msg.getNumber() - 1 || convNB < 1);
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", this.name, convNB)); //we give the name of the profile in order the databse knows which conversation to give
-                
+
                 waitMessage(false); // wait the decision of the server (create new or connect)
                 if (msg.getMessage() == "create new")
                     createPrivateMessage();
                 else
-                    discussionPage();
+                    discussionPage(); // the function that handle the communication
             }
         }
 
@@ -154,7 +152,7 @@ namespace Client
                 int friendNB;
                 do
                 {
-                    friendNB = Int32.Parse(Console.ReadLine());
+                    friendNB = readNumber();
                 } while (friendNB > msg.getNumber() - 1 || friendNB < 1);
 
                 Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", name, friendNB));
@@ -173,10 +171,10 @@ namespace Client
             int topic;
             do
             {
-                topic = Int32.Parse(Console.ReadLine());
+                topic = readNumber();
             } while (topic > msg.getNumber()-1 || topic < 1);
 
-            Network.Net.sendMsg(comm.GetStream(), new Network.Request("topics", topic));
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("topics", this.name, topic));
             discussionPage();
         }
 
@@ -186,7 +184,7 @@ namespace Client
             do
             {
                 string s = Console.ReadLine();
-                Network.Net.sendMsg(comm.GetStream(), new Network.Request(this.name, s));
+                Network.Net.sendMsg(comm.GetStream(), new Network.Request("topic",this.name, s));
                 waitMessage(true);
             } while (msg.getTitle() != "home page redirection");
         }
@@ -199,8 +197,10 @@ namespace Client
         {
             waitMessage(true); // instructions creating a topic
             string title = Console.ReadLine();
-            Network.Net.sendMsg(comm.GetStream(), new Network.Request(name + " create topic", title));
-            waitMessage(false);
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request(name + "create topic", title));
+            waitMessage(false); // wait validation in order to send the name  of the chatter
+            Network.Net.sendMsg(comm.GetStream(), new Network.Request("create topic", this.name));
+            waitMessage(false); // wait the final answer
             if (!msg.getError())
                 discussionPage(); // after creating the topic, we go to its page
             else
@@ -216,23 +216,42 @@ namespace Client
             Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", this.name));
             waitMessage(true); // print the instructions + list of users
 
-            int friendID;
-            do
+            if(!msg.getError()) // if there is at least 1 friend
             {
-                friendID = Int32.Parse(Console.ReadLine());
-            } while (friendID > msg.getNumber() - 1 || friendID < 1);
-            Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", friendID)); 
+                int friendID;
+                do
+                {
+                    friendID = readNumber();
+                } while (friendID > msg.getNumber() - 1 || friendID < 1);
+                Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", friendID));
+            }
+            
         }
 
 
         // ---------------------------------     USEFULL FUNCTION     ---------------------------------
 
+        private int readNumber()
+        {
+            int n;
+            try
+            {
+                n = Int32.Parse(Console.ReadLine());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("This is not a number, " + e);
+                n = -1;
+            }
+            return n;
+        }
 
         private void exit()
         {
-            Console.WriteLine("\n\nPress any key to quit...");
+            Console.WriteLine("\nPress any key to quit...");
             Console.ReadLine();
-            Environment.Exit(0);
+            // catch the thread of the client
+            client.Abort();
         }
 
         private void waitMessage(bool print)

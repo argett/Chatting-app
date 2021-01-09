@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    [Serializable]
     public class Profile
     {
         public string login;
@@ -51,6 +52,7 @@ namespace Server
             }
             else
             {
+                Console.WriteLine("ERROR 404 : can't find the conversation with name " + title);
                 return null;
             }
         }

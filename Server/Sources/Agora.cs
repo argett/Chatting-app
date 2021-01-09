@@ -6,20 +6,22 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    [Serializable]
     public abstract class Agora
     {
-        private List<Comment> comments;
+        private List<Comment> discussion;
 
-        public List<Comment> Comments
+
+        public List<Comment> Discussion
         {
-            get => comments;
-            set => comments = value;
+            get => discussion;
+            set => discussion = value;
         }
 
         public void addComment(string u, string m)
         {
             Comment c = new Comment(u, m);
-            comments.Add(c);
+            discussion.Add(c);
         }
     }
 }
