@@ -26,7 +26,7 @@ namespace Server
 
         // ---------------------------------     CONNECTION PART     ---------------------------------     
 
-        /****************
+        /** *************
          * 
          * creation of an instance of a user in a thread
          * 
@@ -54,13 +54,13 @@ namespace Server
             }
 
 
-            /****************
-         * 
-         * the welcome page, the user choose to create a new account or use an existing one
-         * send the result at the client at the end
-         * "connection denied" occure when the user has chosen to exit the program
-         * 
-         ****************/
+            /** *************
+            * 
+            * the welcome page, the user choose to create a new account or use an existing one
+            * send the result at the client at the end
+            * "connection denied" occure when the user has chosen to exit the program
+            * 
+            ****************/
             public void welcomeOnTheSite()
             {
                 Console.WriteLine(", the user is choosing between create or use an existing account");
@@ -78,7 +78,7 @@ namespace Server
                 }
             }
 
-            /****************
+            /** *************
              * 
              * Check the choice made in the previous function
              * 
@@ -103,7 +103,7 @@ namespace Server
                 return false;
             }
 
-            /****************
+            /** *************
              * 
              * initialize a new user
              * 
@@ -138,7 +138,7 @@ namespace Server
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("checkpoint message", "Your account has been correctly created. please log in now", false));
             }
 
-            /****************
+            /** *************
              * 
              * the user enter its ID & password, return true when connetced, return false if the user wants to quit
              * 
@@ -163,7 +163,7 @@ namespace Server
                 }
             }
 
-            /****************
+            /** *************
              * 
              * separate the complete string into and ID and a PASSWORD
              * 
@@ -193,7 +193,7 @@ namespace Server
                 return data;
             }
 
-            /****************
+            /** *************
              * 
              * check if the password and the ID correspond to an existing one
              * 
@@ -220,6 +220,11 @@ namespace Server
 
             // ---------------------------------     HOME WEBSITE PART     --------------------------------- 
 
+            /** **************
+            * 
+            * function that calls the function that has been chosen by the user
+            * 
+            ****************/
             private void homePage()
             {
                 bool _continue = true;
@@ -262,13 +267,22 @@ namespace Server
 
             // ---------------------------------     PRIVATE MESSAGE PART     --------------------------------- 
 
-
+            /** **************
+            * 
+            * synchronise the requests/answers
+            * 
+            ****************/
             private void privateMsg()
             {
                 waitMessage();
                 listConversation(findProfile(req.getMessage())); // print all conversation of the profile
             }
 
+            /** **************
+            * 
+            * send to the Client a string containing all the topics
+            * 
+            ****************/
             private void listConversation(Profile p)
             {
                 List<String> nameChoosen = new List<string>();
@@ -302,6 +316,11 @@ namespace Server
                 }
             }
 
+            /** **************
+            * 
+            * send to the Client the whole conversation with comments in a string 
+            * 
+            ****************/
             private void conversationcPage(string name, string titleDiscussion)
             {
                 Profile p = findProfile(name);
@@ -359,6 +378,12 @@ namespace Server
                 }
             }
 
+            /** **************
+            * 
+            * send to the Client instructions on how to create a new conversation
+            * get the answer and create or not the new conversation if no friends
+            * 
+            ****************/
             private void createNewConv(string nameUser)
             {
                 Profile p = findProfile(nameUser);
@@ -396,7 +421,11 @@ namespace Server
 
             // ---------------------------------     CONSULT TOPICS PART     --------------------------------- 
 
-
+            /** **************
+            * 
+            * function that asks the topic chosen by the user and call the display topic function
+            * 
+            ****************/
             private void connTopic()
             {
                 listTopics();
@@ -412,6 +441,12 @@ namespace Server
                 topicPage(topicN);
             }
 
+
+            /** **************
+            * 
+            * send to the Client the list of the topics existing
+            * 
+            ****************/
             private void listTopics()
             {
                 string topics = "Choose a topic among these topics (enter the number):\n";
@@ -431,6 +466,11 @@ namespace Server
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("topics", topics, i, false));
             }
 
+            /** **************
+            * 
+            * send to the Client the whole topic with comments in a string 
+            * 
+            ****************/
             private void topicPage(int i)
             {
                 bool _continue = true;
@@ -498,6 +538,12 @@ namespace Server
 
             // ---------------------------------     CREATE TOPICS PART     --------------------------------- 
 
+            /** **************
+            * 
+            * send to the Client instructions on how to create a topic
+            * create the new topic if it can and call the corresponding displaying function
+            * 
+            ****************/
             private void createTopic()
             {
                 Network.Net.sendMsg(comm.GetStream(), new Network.Answer("create topic", "To create a topic, please enter its name : \n", false));
@@ -528,6 +574,13 @@ namespace Server
 
             // ---------------------------------     ADD FRIEND PART     --------------------------------- 
 
+            /** **************
+            * 
+            * send to the Client instructions on how to add a friend
+            * send a string containing all existing users
+            * takes the answer and update the database
+            * 
+            ****************/
             private void addFriend()
             {
                 waitMessage(); // wait to get the name of the user
@@ -538,8 +591,6 @@ namespace Server
                 List<Profile> friends = findProfile(req.getMessage()).getFriends(); //list of exisiting friends
 
                 semaphore.WaitOne();
-
-
                 foreach (Profile p in Database.getProfiles())
                 {
                     bool find = false;

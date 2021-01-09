@@ -30,7 +30,7 @@ namespace Client
         // ---------------------------------     CONNECTION PART     ---------------------------------
 
 
-        /****************
+        /** **************
          * 
          * the client start pinging the server to say "i want to connect"
          * serve connecting to an account and/or creating a new one
@@ -62,7 +62,7 @@ namespace Client
             client.Start();
         }
 
-        /****************
+        /** **************
          * 
          * call others function depending on the result of the connection
          * 
@@ -83,7 +83,11 @@ namespace Client
 
         // ---------------------------------     HOME WEBSITE PART     --------------------------------- 
 
-
+        /** **************
+         * 
+         * menu of the program, allow to chose what to do
+         * 
+         ****************/
         private void homeServer()
         {
             int n;
@@ -120,7 +124,13 @@ namespace Client
 
 
         // ---------------------------------     PRIVATE MESSAGE PART     --------------------------------- 
-
+        
+        
+        /** **************
+         * 
+         * allow the user to choose the conversation he/she wants to join or create
+         * 
+         ****************/
         public void privateMessageHome()
         {
             Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", this.name)); //we give the name of the profile in order the databse knows which conversation to give
@@ -132,7 +142,7 @@ namespace Client
                 {
                     convNB = readNumber();
                 } while (convNB > msg.getNumber() - 1 || convNB < 1);
-                Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", this.name, convNB)); //we give the name of the profile in order the databse knows which conversation to give
+                Network.Net.sendMsg(comm.GetStream(), new Network.Request("private message", this.name, convNB)); //we give the name of the profile in order the database knows which conversation to give
 
                 waitMessage(false); // wait the decision of the server (create new or connect)
                 if (msg.getMessage() == "create new")
@@ -142,6 +152,11 @@ namespace Client
             }
         }
 
+        /** **************
+         * 
+         * function that supports the chat, friends send mesages to each others
+         * 
+         ****************/
         private void createPrivateMessage()
         {
             waitMessage(true); // show instructions
@@ -162,8 +177,15 @@ namespace Client
         }
 
 
-        // ---------------------------------     CONSULT TOPICS PART     --------------------------------- 
+        //--------------------------------     CONSULT TOPICS PART     --------------------------------- 
 
+
+        /** **************
+         * 
+         * this function print the list of all the topics. 
+         * Allow the user to choose the conversation he/she wants to join or create
+         * 
+         ****************/
 
         private void topics()
         {
@@ -178,6 +200,12 @@ namespace Client
             discussionPage();
         }
 
+
+        /** **************
+         * 
+         * function that supports the chat, display all the comments and the topic name
+         * 
+         ****************/
         private void discussionPage()
         {
             waitMessage(true); // print the comments on the topics
@@ -192,7 +220,12 @@ namespace Client
 
         // ---------------------------------     CREATE TOPICS PART     --------------------------------- 
 
-        
+
+        /** **************
+         * 
+         * the user enters the name of the future topic
+         * 
+         ****************/
         private void createTopic()
         {
             waitMessage(true); // instructions creating a topic
@@ -210,7 +243,12 @@ namespace Client
 
         // ---------------------------------     ADD FRIEND PART     --------------------------------- 
 
-        
+
+        /** **************
+         * 
+         * function that displays the list of the application users. The user has to chose one
+         * 
+         ****************/
         private void addFriend()
         {
             Network.Net.sendMsg(comm.GetStream(), new Network.Request("add friend", this.name));
